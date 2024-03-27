@@ -34,7 +34,7 @@ public class RemoteFileSyncer {
     private final String downloadUrl;
     private final String saveFilePath;
     private final String tmpFilePath;
-    private final RetryPolicy retryPolicy;
+    private final RetryPolicy retryPolicy; // TODO: Supplier?
     private final long updatePeriod;
     private final HttpClient httpClient;
     private final Vertx vertx;
@@ -88,23 +88,26 @@ public class RemoteFileSyncer {
         }
     }
 
-    public void sync(RemoteFileProcessor processor) {
-        fileSystem.exists(saveFilePath)
+    public void sync(RemoteFileProcessor processor) { // TODO: processor need to be field
+        fileSystem.exists(saveFilePath) // TODO: acquire lock on file
                 .compose(exists -> exists ? processSavedFile(processor) : syncRemoteFile(processor, retryPolicy))
                 .onComplete(ignored -> setUpDeferredUpdate(processor));
     }
 
     private Future<Void> processSavedFile(RemoteFileProcessor processor) {
-        return processor.setDataPath(saveFilePath)
-                .onFailure(ignored -> fileSystem.delete(saveFilePath))
-                .onFailure(error -> logger.error("Can't process saved file"))
+        return processor.setDataPath(saveFilePath) // TODO: pass AsyncFile
+                // TODO: log file name + log deletion failure
+                .onFailure(error -> logger.error("Can't process saved file: " + saveFilePath))
+                .recover(ignored -> fileSystem.delete(saveFilePath)
+                        .onFailure(error -> logger.error("Can't delete corrupted file: " + saveFilePath))
+                        .mapEmpty())
                 .mapEmpty();
     }
 
     private Future<Void> syncRemoteFile(RemoteFileProcessor processor, RetryPolicy retryPolicy) {
-        return fileSystem.open(tmpFilePath, new OpenOptions())
+        return fileSystem.open(tmpFilePath, new OpenOptions()) // TODO: createNew?
 
-                .compose(tmpFile -> httpClient.request(getFileRequestOptions)
+                .compose(tmpFile -> httpClient.request(getFileRequestOptions) // TODO: unify options lifecycle
                         .compose(HttpClientRequest::send)
                         .compose(response -> response.pipeTo(tmpFile))
                         .onComplete(result -> tmpFile.close()))
@@ -113,6 +116,7 @@ public class RemoteFileSyncer {
                         tmpFilePath, saveFilePath, new CopyOptions().setReplaceExisting(true)))
 
                 .compose(ignored -> processSavedFile(processor))
+                // TODO: log error + delete tmpFile when needed
                 .recover(error -> retrySync(processor, retryPolicy).mapEmpty())
                 .mapEmpty();
 
@@ -123,6 +127,13 @@ public class RemoteFileSyncer {
             logger.info("Retrying file download from {} with policy: {}", downloadUrl, retryPolicy);
 
             final Promise<Void> promise = Promise.promise();
+            // TODO: possible inf recursion (memory pollution)
+            // sync             notCompleted
+            //  - retrySync     notCompleted
+            //  - sync          notCompleted
+            //    - retrySync   notCompleted
+            //    - sync        notCompleted
+            // ...
             vertx.setTimer(policy.delay(), timerId -> syncRemoteFile(processor, policy.next()).onComplete(promise));
             return promise.future();
         } else {
@@ -130,6 +141,7 @@ public class RemoteFileSyncer {
         }
     }
 
+    // TODO: move down
     private void updateIfNeeded(RemoteFileProcessor processor) {
         httpClient.request(isUpdateRequiredRequestOptions)
                 .compose(HttpClientRequest::send)
@@ -147,10 +159,12 @@ public class RemoteFileSyncer {
 
     private void setUpDeferredUpdate(RemoteFileProcessor remoteFileProcessor) {
         if (updatePeriod > 0) {
+            // TODO: periodic?
             vertx.setTimer(updatePeriod, ignored -> updateIfNeeded(remoteFileProcessor));
         }
     }
 
+    // TODO: maybe checkSum?
     private Future<Boolean> isLengthChanged(HttpClientResponse response) {
         final String contentLengthParameter = response.getHeader(HttpHeaders.CONTENT_LENGTH);
         return StringUtils.isNumeric(contentLengthParameter) && !contentLengthParameter.equals("0")
