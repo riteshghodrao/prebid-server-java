@@ -31,10 +31,11 @@ public class RemoteFileSyncer {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteFileSyncer.class);
 
+    private final RemoteFileProcessor processor;
     private final String downloadUrl;
     private final String saveFilePath;
     private final String tmpFilePath;
-    private final RetryPolicy retryPolicy; // TODO: Supplier?
+    private final RetryPolicy retryPolicy;
     private final long updatePeriod;
     private final HttpClient httpClient;
     private final Vertx vertx;
@@ -42,7 +43,8 @@ public class RemoteFileSyncer {
     private final RequestOptions getFileRequestOptions;
     private final RequestOptions isUpdateRequiredRequestOptions;
 
-    public RemoteFileSyncer(String downloadUrl,
+    public RemoteFileSyncer(RemoteFileProcessor processor,
+                            String downloadUrl,
                             String saveFilePath,
                             String tmpFilePath,
                             RetryPolicy retryPolicy,
@@ -51,6 +53,7 @@ public class RemoteFileSyncer {
                             HttpClient httpClient,
                             Vertx vertx) {
 
+        this.processor = Objects.requireNonNull(processor);
         this.downloadUrl = HttpUtil.validateUrl(downloadUrl);
         this.saveFilePath = Objects.requireNonNull(saveFilePath);
         this.tmpFilePath = Objects.requireNonNull(tmpFilePath);
@@ -88,26 +91,28 @@ public class RemoteFileSyncer {
         }
     }
 
-    public void sync(RemoteFileProcessor processor) { // TODO: processor need to be field
-        fileSystem.exists(saveFilePath) // TODO: acquire lock on file
-                .compose(exists -> exists ? processSavedFile(processor) : syncRemoteFile(processor, retryPolicy))
-                .onComplete(ignored -> setUpDeferredUpdate(processor));
+    public void sync() {
+        fileSystem.exists(saveFilePath)
+                .compose(exists -> exists ? processSavedFile() : syncRemoteFile(retryPolicy))
+                .onComplete(ignored -> setUpDeferredUpdate());
     }
 
-    private Future<Void> processSavedFile(RemoteFileProcessor processor) {
-        return processor.setDataPath(saveFilePath) // TODO: pass AsyncFile
-                // TODO: log file name + log deletion failure
+    private Future<Void> processSavedFile() {
+        return processor.setDataPath(saveFilePath)
                 .onFailure(error -> logger.error("Can't process saved file: " + saveFilePath))
-                .recover(ignored -> fileSystem.delete(saveFilePath)
-                        .onFailure(error -> logger.error("Can't delete corrupted file: " + saveFilePath))
-                        .mapEmpty())
+                .recover(ignored -> deleteFile(saveFilePath).mapEmpty())
                 .mapEmpty();
     }
 
-    private Future<Void> syncRemoteFile(RemoteFileProcessor processor, RetryPolicy retryPolicy) {
-        return fileSystem.open(tmpFilePath, new OpenOptions()) // TODO: createNew?
+    private Future<Void> deleteFile(String filePath) {
+        return fileSystem.delete(filePath)
+                .onFailure(error -> logger.error("Can't delete corrupted file: " + saveFilePath));
+    }
 
-                .compose(tmpFile -> httpClient.request(getFileRequestOptions) // TODO: unify options lifecycle
+    private Future<Void> syncRemoteFile(RetryPolicy retryPolicy) {
+        return fileSystem.open(tmpFilePath, new OpenOptions())
+
+                .compose(tmpFile -> httpClient.request(getFileRequestOptions)
                         .compose(HttpClientRequest::send)
                         .compose(response -> response.pipeTo(tmpFile))
                         .onComplete(result -> tmpFile.close()))
@@ -115,34 +120,34 @@ public class RemoteFileSyncer {
                 .compose(ignored -> fileSystem.move(
                         tmpFilePath, saveFilePath, new CopyOptions().setReplaceExisting(true)))
 
-                .compose(ignored -> processSavedFile(processor))
-                // TODO: log error + delete tmpFile when needed
-                .recover(error -> retrySync(processor, retryPolicy).mapEmpty())
+                .compose(ignored -> processSavedFile())
+                .onFailure(ignored -> deleteFile(tmpFilePath))
+                .onFailure(error -> logger.error("Could not sync remote file", error))
+
+                .recover(error -> retrySync(retryPolicy).mapEmpty())
                 .mapEmpty();
 
     }
 
-    private Future<Void> retrySync(RemoteFileProcessor processor, RetryPolicy retryPolicy) {
+    private Future<Void> retrySync(RetryPolicy retryPolicy) {
         if (retryPolicy instanceof Retryable policy) {
             logger.info("Retrying file download from {} with policy: {}", downloadUrl, retryPolicy);
 
             final Promise<Void> promise = Promise.promise();
-            // TODO: possible inf recursion (memory pollution)
-            // sync             notCompleted
-            //  - retrySync     notCompleted
-            //  - sync          notCompleted
-            //    - retrySync   notCompleted
-            //    - sync        notCompleted
-            // ...
-            vertx.setTimer(policy.delay(), timerId -> syncRemoteFile(processor, policy.next()).onComplete(promise));
+            vertx.setTimer(policy.delay(), timerId -> syncRemoteFile(policy.next()).onComplete(promise));
             return promise.future();
         } else {
             return Future.failedFuture(new PreBidException("File sync failed"));
         }
     }
 
-    // TODO: move down
-    private void updateIfNeeded(RemoteFileProcessor processor) {
+    private void setUpDeferredUpdate() {
+        if (updatePeriod > 0) {
+            vertx.setPeriodic(updatePeriod, ignored -> updateIfNeeded());
+        }
+    }
+
+    private void updateIfNeeded() {
         httpClient.request(isUpdateRequiredRequestOptions)
                 .compose(HttpClientRequest::send)
                 .compose(response -> fileSystem.exists(saveFilePath)
@@ -151,20 +156,11 @@ public class RemoteFileSyncer {
                                 : Future.succeededFuture(true)))
                 .onSuccess(shouldUpdate -> {
                     if (shouldUpdate) {
-                        syncRemoteFile(processor, retryPolicy);
+                        syncRemoteFile(retryPolicy);
                     }
-                })
-                .onComplete(ignored -> setUpDeferredUpdate(processor));
+                });
     }
 
-    private void setUpDeferredUpdate(RemoteFileProcessor remoteFileProcessor) {
-        if (updatePeriod > 0) {
-            // TODO: periodic?
-            vertx.setTimer(updatePeriod, ignored -> updateIfNeeded(remoteFileProcessor));
-        }
-    }
-
-    // TODO: maybe checkSum?
     private Future<Boolean> isLengthChanged(HttpClientResponse response) {
         final String contentLengthParameter = response.getHeader(HttpHeaders.CONTENT_LENGTH);
         return StringUtils.isNumeric(contentLengthParameter) && !contentLengthParameter.equals("0")
