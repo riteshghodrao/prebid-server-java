@@ -66,6 +66,7 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-mysql-client</artifactId>
+            <version>4.5.9</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
@@ -681,6 +682,19 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <reporting>
         <plugins>
