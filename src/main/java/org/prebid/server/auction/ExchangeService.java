@@ -377,7 +377,6 @@ public class ExchangeService {
                         .build();
             }
         }
-
         return BidRequestCacheInfo.noCache();
     }
 
@@ -982,6 +981,7 @@ public class ExchangeService {
 
         return bidRequest.getImp().stream()
                 .filter(imp -> bidderParamsFromImpExt(imp.getExt()).hasNonNull(bidder))
+                .map(imp -> imp.toBuilder().ext(imp.getExt().deepCopy()).build())
                 .map(imp -> impAdjuster.adjust(imp, bidder, bidderAliases, debugWarnings))
                 .map(imp -> prepareImp(imp, bidder, bidRequest, transmitTid, useFirstPartyData, account, debugWarnings))
                 .toList();
@@ -1017,18 +1017,17 @@ public class ExchangeService {
                                      BigDecimal adjustedFloor,
                                      boolean transmitTid,
                                      boolean useFirstPartyData) {
-
-        final ObjectNode modifiedImpExt = impExt.deepCopy();
+        final JsonNode bidderNode = bidderParamsFromImpExt(impExt).get(bidder);
         final JsonNode impExtPrebid = prepareImpExt(impExt.get(PREBID_EXT), adjustedFloor);
         Optional.ofNullable(impExtPrebid).ifPresentOrElse(
-                ext -> modifiedImpExt.set(PREBID_EXT, ext),
-                () -> modifiedImpExt.remove(PREBID_EXT));
-        modifiedImpExt.set(BIDDER_EXT, bidderParamsFromImpExt(impExt).get(bidder));
+                ext -> impExt.set(PREBID_EXT, ext),
+                () -> impExt.remove(PREBID_EXT));
+        impExt.set(BIDDER_EXT, bidderNode);
         if (!transmitTid) {
-            modifiedImpExt.remove(TID_EXT);
+            impExt.remove(TID_EXT);
         }
 
-        return fpdResolver.resolveImpExt(modifiedImpExt, useFirstPartyData);
+        return fpdResolver.resolveImpExt(impExt, useFirstPartyData);
     }
 
     private JsonNode prepareImpExt(JsonNode extImpPrebidNode, BigDecimal adjustedFloor) {
