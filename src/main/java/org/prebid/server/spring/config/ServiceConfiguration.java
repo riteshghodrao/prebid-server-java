@@ -386,7 +386,6 @@ public class ServiceConfiguration {
             IpAddressHelper ipAddressHelper,
             HookStageExecutor hookStageExecutor,
             CountryCodeMapper countryCodeMapper,
-            PriceFloorProcessor priceFloorProcessor,
             Metrics metrics) {
 
         final List<String> blocklistedAccounts = splitToList(blocklistedAccountsString);
@@ -404,7 +403,6 @@ public class ServiceConfiguration {
                 applicationSettings,
                 ipAddressHelper,
                 hookStageExecutor,
-                priceFloorProcessor,
                 countryCodeMapper,
                 metrics);
     }
