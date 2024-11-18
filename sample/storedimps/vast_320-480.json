@@ -1,0 +1,22 @@
+{
+  "ext": {
+    "prebid": {
+      "storedauctionresponse": {
+        "id": "bidswitch_320x480_video"
+      }
+    } ,
+    "inmobi": {
+      "plc": "1443164204410730"
+    }
+  },
+  "id": "interstitial-320x480-test",
+  "instl": 1,
+  "video": {
+    "mimes": ["video/mp4"],
+    "minduration": 0,
+    "maxduration": 60,
+    "protocols": [1,2,3,4,5,6,7,9,10],
+    "api": [1,2],
+    "plcmt": 4
+  }
+}

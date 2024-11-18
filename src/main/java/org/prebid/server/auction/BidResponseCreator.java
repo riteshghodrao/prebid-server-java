@@ -1067,13 +1067,14 @@ public class BidResponseCreator {
     /**
      * Returns a singleton map with "cache" as a key and list of {@link ExtBidderError}s cache errors as a value.
      */
+    //TODO: removing all cache related errors for now
     private static Map<String, List<ExtBidderError>> extractCacheErrors(CacheServiceResult cacheResult) {
         final Throwable error = cacheResult.getError();
-        if (error != null) {
-            final ExtBidderError extBidderError = ExtBidderError.of(BidderError.Type.generic.getCode(),
-                    error.getMessage());
-            return Collections.singletonMap(CACHE, Collections.singletonList(extBidderError));
-        }
+//        if (error != null) {
+//            final ExtBidderError extBidderError = ExtBidderError.of(BidderError.Type.generic.getCode(),
+//                    error.getMessage());
+//            return Collections.singletonMap(CACHE, Collections.singletonList(extBidderError));
+//        }
         return Collections.emptyMap();
     }
 
@@ -1699,8 +1700,10 @@ public class BidResponseCreator {
         return value != null && value >= 0 && value <= 255 ? value : null;
     }
 
+    //TODO: overwriting for debug
     private static boolean isCachedDebugEnabled(CachedDebugLog cachedDebugLog) {
-        return cachedDebugLog != null && cachedDebugLog.isEnabled();
+        return false;
+//        return cachedDebugLog != null && cachedDebugLog.isEnabled();
     }
 
     /**

@@ -1,0 +1,117 @@
+{
+  "requestId": "c2254984-0349-1000-c657-00293784a132",
+  "placementId": 1714929978078,
+  "adSets": [
+    {
+      "adSetId": "5771b7f1-44bf-4b84-98e8-c82cead122d1",
+      "expiry": 3300,
+      "ads": [
+        {
+          "pubContent": "<TEMPLATE_HTML_DATA>",
+          "markupType": "html",
+          "expiry": 3300,
+          "metaInfo": {
+            "creativeType": "<CREATIVE_TYPE>",
+            "iasEnabled": false,
+            "omsdkInfo": {
+              "omidEnabled": true,
+              "customReferenceData": "",
+              "isolateVerificationScripts": false,
+              "macros": {
+                "$LIMIT_AD_TRACKING": "0",
+                "#GEO_CC": "us",
+                "$SDK_VERSION_ID": "a1063",
+                "$GEO_LAT": "",
+                "#GEO_LAT": "",
+                "$RSAID": "a98f4049-e0cf-45ff-b564-f45f5b5e76c3",
+                "#IDA": "a98f4049-e0cf-45ff-b564-f45f5b5e76c3",
+                "#GEO_LNG": "",
+                "#LIMIT_AD_TRACKING": "0",
+                "$HANDSET_MAKE": "OPPO",
+                "#HANDSET_MAKE": "OPPO",
+                "#PARTNER_ADV_ID": "0",
+                "$HANDSET_LANG": "en",
+                "#HANDSET_LANG": "en",
+                "$SI_BLIND": "KF9WMXJV",
+                "$GEO_LNG": "",
+                "#RSAID": "a98f4049-e0cf-45ff-b564-f45f5b5e76c3",
+                "#ADVERTISER_ID": "e8bbb2b78b8b4948adc33599e88b32dd",
+                "$IMP_CB": "9784250c-0191-1000-f22a-052d176a0034",
+                "$GEO_CC": "us",
+                "#DEAL_ID": "0",
+                "#PLACEMENT_DIMENSION": "320X480",
+                "$PLACEMENT_DIMENSION": "320X480",
+                "$HANDSET_NAME": "CPH1931",
+                "#SDK_VERSION_ID": "a1063",
+                "#AD_SLOT": "320X480",
+                "#HANDSET_NAME": "CPH1931",
+                "$ADVERTISER_ID": "e8bbb2b78b8b4948adc33599e88b32dd",
+                "#SI_BLIND": "KF9WMXJV",
+                "#SI_RAW": "com.easytools.smartcalculator",
+                "#IMP_CB": "9784250c-0191-1000-f22a-052d176a0034",
+                "$HANDSET_TYPE": "SMARTPHONE",
+                "#HANDSET_TYPE": "SMARTPHONE",
+                "$DEAL_ID": "0",
+                "#GPID": "a98f4049-e0cf-45ff-b564-f45f5b5e76c3",
+                "#CREATIVE_ID": "3892623",
+                "$BLINDED_SITE_ID": "KF9WMXJV",
+                "$SI_RAW": "com.easytools.smartcalculator",
+                "#BLINDED_SITE_ID": "KF9WMXJV",
+                "$IDA": "a98f4049-e0cf-45ff-b564-f45f5b5e76c3",
+                "$CREATIVE_ID": "3892623",
+                "$GPID": "a98f4049-e0cf-45ff-b564-f45f5b5e76c3",
+                "$PARTNER_ADV_ID": "0",
+                "$AD_SLOT": "320X480"
+              },
+              "impressionType": 4
+            },
+            "disableIMViewability": false,
+            "landingPageParams": [
+              {
+                "openMode": "DEFAULT",
+                "openMraidLandingPageInBG": false
+              }
+            ]
+          },
+          "tracking": "web",
+          "creativeId": "rSoqPuSDz0PLx5nMhxPlw9++qoYsGN+LeV7O7xYo22AIjZcaYP0UcoNtAITirsSdBk83ANME7FQ\u003d",
+          "bidBundle": "com.pinterest",
+          "allowAutoRedirection": true,
+          "trackers": [
+            {
+              "type": "impression",
+              "url": [
+                "https://example.com/sdk_impression"
+              ]
+            }
+          ],
+          "transaction": {
+            "adSourceName": "AerMarket AdSource",
+            "buyerName": "InMobi",
+            "buyerPrice": 0.148911,
+            "bidValue": 0.148911
+          },
+          "canLoadBeforeShow": true,
+          "applyBitmap": false,
+          "baseEventUrl": "",
+          "trackingEvents": [
+
+          ],
+          "impressionId": "9784250c-0191-1000-f22a-052d176a0034",
+          "contextData": {
+            "casAdTypeId": 0,
+            "bidderId": 308330,
+            "enabled": true,
+            "advertisedContent": "com.pinterest"
+          },
+          "telemetryMetadataBlob": "Fuilv6azj8ioLRggZThiYmIyYjc4YjhiNDk0OGFkYzMzNTk5ZTg4YjMyZGQYBGRmdzEoClNUQVRJQ19GU0kA"
+        }
+      ],
+      "adSetAuctionMeta": "",
+      "isAuctionClosed": true,
+      "isPod": false,
+      "logEnabled": true,
+      "isRewarded": false
+    }
+  ]
+}

@@ -68,7 +68,7 @@ public class IpAddressHelper {
             final String sanitizedIp = version == IpAddress.IP.v6 ? maskIpv6(ipAddress) : ip;
             return IpAddress.of(sanitizedIp, version);
         }
-
+        System.out.println("Returning null IP, original was " + ipAddress);
         return null;
     }
 
@@ -129,12 +129,13 @@ public class IpAddressHelper {
         }
     }
 
+    //TODO: temporary override for debugging via charles
     private boolean isIpPublic(IPAddress ipAddress) {
-        return ipAddress != null
-                && !ipAddress.isLocal()
-                && !ipAddress.isLoopback()
-                && !ipAddress.isMulticast()
-                && !ipAddress.isMax()
-                && ipv6LocalNetworkMaskAddresses.stream().noneMatch(network -> network.contains(ipAddress));
+        return ipAddress != null;
+//                && !ipAddress.isLocal()
+//                && !ipAddress.isLoopback()
+//                && !ipAddress.isMulticast()
+//                && !ipAddress.isMax()
+//                && ipv6LocalNetworkMaskAddresses.stream().noneMatch(network -> network.contains(ipAddress));
     }
 }

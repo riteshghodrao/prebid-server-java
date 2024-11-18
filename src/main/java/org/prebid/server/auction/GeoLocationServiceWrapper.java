@@ -48,7 +48,6 @@ public class GeoLocationServiceWrapper {
                 .map(AccountSettings::getGeoLookup)
                 .map(BooleanUtils::isTrue)
                 .orElse(false);
-
         return isGeoLookupEnabled
                 ? doLookup(getIpAddress(device, requestContext), getCountry(device), timeout).otherwiseEmpty()
                 : Future.succeededFuture();

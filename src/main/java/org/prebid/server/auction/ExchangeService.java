@@ -291,7 +291,6 @@ public class ExchangeService {
         final BidRequestCacheInfo cacheInfo = bidRequestCacheInfo(bidRequest);
         final Map<String, MultiBidConfig> bidderToMultiBid = bidderToMultiBids(bidRequest, debugWarnings);
         receivedContext.getBidRejectionTrackers().putAll(makeBidRejectionTrackers(bidRequest, aliases));
-
         return storedResponseProcessor.getStoredResponseResult(bidRequest.getImp(), timeout)
                 .map(storedResponseResult -> populateStoredResponse(storedResponseResult, storedAuctionResponses))
                 .compose(storedResponseResult ->
@@ -826,9 +825,11 @@ public class ExchangeService {
             BidderAliases bidderAliases,
             AuctionContext context) {
 
-        final boolean blockedRequestByTcf = bidderPrivacyResult.isBlockedRequestByTcf();
+//        final boolean blockedRequestByTcf = bidderPrivacyResult.isBlockedRequestByTcf();
+        final boolean blockedRequestByTcf = false;
         final boolean blockedAnalyticsByTcf = bidderPrivacyResult.isBlockedAnalyticsByTcf();
         final String bidder = bidderPrivacyResult.getRequestBidder();
+
         if (blockedRequestByTcf) {
             context.getBidRejectionTrackers()
                     .get(bidder)
@@ -1317,7 +1318,6 @@ public class ExchangeService {
         final long auctionStartTime = timeoutContext.getStartTime();
         final int adjustmentFactor = timeoutContext.getAdjustmentFactor();
         final long bidderRequestStartTime = clock.millis();
-
         return Future.succeededFuture(bidderRequest.getBidRequest())
                 .map(bidRequest -> adjustTmax(bidRequest, auctionStartTime, adjustmentFactor, bidderRequestStartTime))
                 .map(bidRequest -> ortbVersionConversionManager.convertFromAuctionSupportedVersion(

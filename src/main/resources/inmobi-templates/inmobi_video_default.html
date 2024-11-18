@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://supply.inmobicdn.net">
+    <link rel="dns-prefetch" href="https://supply.inmobicdn.net">
+    <link rel="dns-prefetch" href="https://i.l-new.inmobicdn.net">
+    <link rel="dns-prefetch" href="https://et-eus.w.inmobi.com">
+    <link rel="preconnect" href="https://vast.doubleverify.com">
+    <link rel="icon" href="data:,">
+
+    <script type="text/javascript">window.isES6Supported=!1;try{var isES6=function(){try{return new Function("(a = {b: 'c'}) => a?.b"),!0}catch(i){return!1}};isES6()?window.isES6Supported=!0:window.isES6Supported=!1}catch(i){window.isES6Supported=!1}</script>
+
+    <script>
+        (()=>{"use strict";var e,t,n={793:(e,t)=>{var n;Object.defineProperty(t,"__esModule",{value:!0}),t.AdFunnelEvent=void 0,(n=t.AdFunnelEvent||(t.AdFunnelEvent={})).AD_INITIALIZED="AD_INITIALIZED",n.SDK_AD_READY_FIRED="SDK_AD_READY_FIRED",n.SDK_AD_FAILED_FIRED="SDK_AD_FAILED_FIRED",n.CREATIVE_READY="CREATIVE_READY",n.USER_SKIP="USER_SKIP",n.USER_SKIP_ALL="USER_SKIP_ALL",n.USER_CLOSE="USER_CLOSE"},709:(e,t)=>{Object.defineProperty(t,"__esModule",{value:!0}),t.AdPerformanceEvent=void 0,t.AdPerformanceEvent||(t.AdPerformanceEvent={})},906:(e,t)=>{Object.defineProperty(t,"__esModule",{value:!0}),t.AdQualityEvent=void 0,t.AdQualityEvent||(t.AdQualityEvent={})},690:(e,t)=>{var n;Object.defineProperty(t,"__esModule",{value:!0}),t.BusinessMetricEvents=void 0,(n=t.BusinessMetricEvents||(t.BusinessMetricEvents={})).LOAD="LOAD",n.RENDER="RENDER",n.VIEWABLE="VIEWABLE",n.MRC_VIEWABLE="MRC_VIEWABLE",n.USER_LANDING="USER_LANDING",n.COMPANION_RENDERED="COMPANION_RENDERED",n.EVC_ENABLED="EVC_ENABLED",n.EVC_TRIGGERED="EVC_TRIGGERED",n.CTA="CTA",n.AUTO_PLAY="AUTO_PLAY",n.FIRST_QUARTILE="FIRST_QUARTILE",n.SECOND_QUARTILE="SECOND_QUARTILE",n.THIRD_QUARTILE="THIRD_QUARTILE",n.VIDEO_END="VIDEO_END",n.PAUSE="PAUSE",n.RESUME="RESUME"},628:(e,t)=>{Object.defineProperty(t,"__esModule",{value:!0}),t.DomEvent=void 0,t.DomEvent||(t.DomEvent={})},469:(e,t,n)=>{Object.defineProperty(t,"__esModule",{value:!0}),t.Events=void 0;var i=n(793),E=n(709),r=n(906),v=n(690),s=n(628),a=n(59),d=n(173),o=n(28),u=n(930);t.Events={AdFunnelEvent:i.AdFunnelEvent,AdPerformanceEvent:E.AdPerformanceEvent,ObservabilityEvent:d.ObservabilityEvent,AdQualityEvent:r.AdQualityEvent,DomEvent:s.DomEvent,OMSDKEvent:o.OMSDKEvent,VASTEvent:u.VASTEvent,MraidEvent:a.MraidEvent,ImraidEvent:a.ImraidEvent,BusinessMetricEvents:v.BusinessMetricEvents}},59:(e,t)=>{var n;Object.defineProperty(t,"__esModule",{value:!0}),t.ImraidEvent=t.MraidEvent=void 0,(n=t.MraidEvent||(t.MraidEvent={})).READY="Ready",n.CLOSE="CLOSE",t.ImraidEvent||(t.ImraidEvent={})},173:(e,t)=>{var n;Object.defineProperty(t,"__esModule",{value:!0}),t.ObservabilityEvent=void 0,(n=t.ObservabilityEvent||(t.ObservabilityEvent={})).AD_INITIALIZED="AdInitialized",n.LOAD="Load",n.RENDER="Render",n.USER_CLICK="UserClick",n.FIRST_QUARTILE="FirstQuartile",n.SECOND_QUARTILE="SecondQuartile",n.THIRD_QUARTILE="ThirdQuartile",n.VIDEO_END="VideoEnd",n.ON_USER_LANDING_COMPLETED="OnUserLandingCompleted",n.USER_CLOSE="UserClose",n.USER_SKIP="UserSkip",n.USER_SKIP_ALL="UserSkipAll"},28:(e,t)=>{Object.defineProperty(t,"__esModule",{value:!0}),t.OMSDKEvent=void 0,t.OMSDKEvent||(t.OMSDKEvent={})},930:(e,t)=>{Object.defineProperty(t,"__esModule",{value:!0}),t.VASTEvent=void 0,t.VASTEvent||(t.VASTEvent={})},169:(e,t)=>{Object.defineProperty(t,"__esModule",{value:!0});var n,i,E=(n={},i={},{subscribe:function(e,t){n[e]||(n[e]=new Set),n[e].add(t)},unsubscribe:function(e,t){n[e]&&n[e].delete(t)},publish:function(e,t){var E={type:e,data:t};n[e]&&n[e].forEach((function(t){try{t(E)}catch(t){console.error("Error occurred in listener for event type '".concat(e,"': ").concat(t))}})),i[e]=t},getLatestEvent:function(e){return e in i?{hasOccurred:!0,data:i[e]}:{hasOccurred:!1,data:void 0}}});t.default=E},795:function(e,t,n){var i=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:!0}),t.EventHub=void 0;var E=i(n(169));t.EventHub=E.default;var r=n(854),v=n(516);(0,r.registerMraidHandlers)(),(0,v.registerObservabilityHandlers)()},854:function(e,t,n){var i=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:!0}),t.registerMraidHandlers=t.MraidPromises=void 0;var E=n(469),r=i(n(169)),v=function(){return new Promise((function(e,t){var n=setInterval((function(){window.mraid&&window.imraid&&(clearInterval(n),clearTimeout(i),e("ready"))}),100),i=setTimeout((function(){clearInterval(n),t("Timeout: Failed to find both mraid and imraid after 10 seconds.")}),1e4)}))},s={mraidReady:new Promise((function(e,t){v().then((function(){window.mraid.getState&&"loading"!==window.mraid.getState()?e("ready"):window.mraid.addEventListener?window.mraid.addEventListener("ready",(function(){"loading"!==window.mraid.getState()?e("ready"):t("failed")})):t("failed")})).catch(t)})),mraidAvailableOnWindowObject:v()};t.MraidPromises=s,t.registerMraidHandlers=function(){s.mraidReady.then((function(){r.default.publish(E.Events.MraidEvent.READY)})).catch((function(e){console.error("Failed to register MRAID handlers:",e)}))}},516:function(e,t,n){var i=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:!0}),t.registerObservabilityHandlers=void 0;var E=n(469),r=i(n(169)),v=n(854),s=function(e){v.MraidPromises.mraidAvailableOnWindowObject.then((function(){var t,n;(null===(t=null===window||void 0===window?void 0:window.imraid)||void 0===t?void 0:t.logTelemetryEvent)&&(null===(n=null===window||void 0===window?void 0:window.imraid)||void 0===n||n.logTelemetryEvent(e))})).catch((function(e){console.error("Failed to log event to IMRAID:",e)}))};t.registerObservabilityHandlers=function(){r.default.subscribe(E.Events.AdFunnelEvent.AD_INITIALIZED,(function(){s({eventType:E.Events.ObservabilityEvent.AD_INITIALIZED,payload:{}})})),r.default.subscribe(E.Events.BusinessMetricEvents.LOAD,(function(){s({eventType:E.Events.ObservabilityEvent.LOAD,payload:{}})})),r.default.subscribe(E.Events.BusinessMetricEvents.RENDER,(function(){s({eventType:E.Events.ObservabilityEvent.RENDER,payload:{}})})),r.default.subscribe(E.Events.BusinessMetricEvents.FIRST_QUARTILE,(function(){s({eventType:E.Events.ObservabilityEvent.FIRST_QUARTILE,payload:{}})})),r.default.subscribe(E.Events.BusinessMetricEvents.SECOND_QUARTILE,(function(){s({eventType:E.Events.ObservabilityEvent.SECOND_QUARTILE,payload:{}})})),r.default.subscribe(E.Events.BusinessMetricEvents.THIRD_QUARTILE,(function(){s({eventType:E.Events.ObservabilityEvent.THIRD_QUARTILE,payload:{}})})),r.default.subscribe(E.Events.BusinessMetricEvents.VIDEO_END,(function(){s({eventType:E.Events.ObservabilityEvent.VIDEO_END,payload:{}})})),r.default.subscribe(E.Events.BusinessMetricEvents.CTA,(function(){s({eventType:E.Events.ObservabilityEvent.USER_CLICK,payload:{}})})),r.default.subscribe(E.Events.BusinessMetricEvents.USER_LANDING,(function(){s({eventType:E.Events.ObservabilityEvent.ON_USER_LANDING_COMPLETED,payload:{}})})),r.default.subscribe(E.Events.AdFunnelEvent.USER_SKIP,(function(){s({eventType:E.Events.ObservabilityEvent.USER_SKIP,payload:{}})})),r.default.subscribe(E.Events.AdFunnelEvent.USER_SKIP_ALL,(function(){s({eventType:E.Events.ObservabilityEvent.USER_SKIP_ALL,payload:{}})})),r.default.subscribe(E.Events.AdFunnelEvent.USER_CLOSE,(function(){s({eventType:E.Events.ObservabilityEvent.USER_CLOSE,payload:{}})}))}}},i={};function E(e){var t=i[e];if(void 0!==t)return t.exports;var r=i[e]={exports:{}};return n[e].call(r.exports,r,r.exports,E),r.exports}e=E(469),t=E(795),window.AD_TECH_UI=window.AD_TECH_UI||{},window.AD_TECH_UI.EventHub=t.EventHub,window.AD_TECH_UI.Events=e.Events})();
+    </script>
+
+    <script>
+        try {
+            window.AD_TECH_UI.EventHub.publish(window.AD_TECH_UI.Events.AdFunnelEvent.AD_INITIALIZED);
+        } catch (e) {}
+    </script>
+
+    <script>function postDataToLoki(r,e){try{var o={project:"LAGOM_VM",vitals:{templateID:e},log:r},n=JSON.stringify(o),t=new XMLHttpRequest;t.open("POST","https://log-activity.templates.inmobi.com/api/v1/ingest",!0),t.setRequestHeader("Content-Type","application/json"),t.send(n)}catch(r){}}function logToSDKTelemetry(r,e){console.log(r,JSON.stringify(e))}function instrumentWindowErrors(){var o={errorsByDomain:{}};function a(r,e){try{o.errorsByDomain[domain]||(o.errorsByDomain[domain]={}),o.errorsByDomain[domain][r]||(o.errorsByDomain[domain][r]=[]),o.errorsByDomain[domain][r].push(e),logToSDKTelemetry("WINDOW_ERROR_LOG",{errorType:r,data:e})}catch(r){}}window.onerror=function(r,e,o,n,t){return a(function(r){return r instanceof TypeError?"TypeError":r instanceof ReferenceError?"ReferenceError":r instanceof RangeError?"RangeError":r instanceof SyntaxError?"SyntaxError":r instanceof URIError?"URIError":r instanceof EvalError?"EvalError":r instanceof AggregateError?"AggregateError":"GeneralError"}(t),{message:r,source:e,line:o,column:n,errorObj:t?t.stack:"No stack trace"}),!0},window.onunhandledrejection=function(r){a("UnhandledRejection",{type:"UnhandledRejection",message:r.reason.message||"Unhandled promise rejection",source:r.reason.stack||"No stack trace",errorObj:r.reason})},window.ErrorCatcher=o}instrumentWindowErrors()</script>
+
+    <script>
+        function useSdkCache(urlString, param = '') {
+          try {
+            if (param === '' || param.includes('sdkAssetCachingParam')) {
+              return urlString;
+            } else {
+              var cache_url = new URL(urlString);
+              var cache_paramParts = param.split('=');
+              var cache_paramName = cache_paramParts[0];
+              var cache_paramValue = cache_paramParts[1];
+              cache_url.searchParams.append(cache_paramName, cache_paramValue);
+              return cache_url.toString();
+            }
+          } catch (e) {
+            return urlString;
+          }
+        }
+        window.useSdkCache = useSdkCache;
+    </script>
+</head>
+<body>
+<script>
+    var style = document.createElement('link');
+    style.href = useSdkCache('https://supply.inmobicdn.net/lagom-assets/main.1.3.63.bundle.css');
+    style.type = 'text/css';
+    style.rel = 'stylesheet';
+    document.head.append(style);
+</script>
+
+<script>
+    try {
+        "use strict";function createAdLoadInitializer(imaiJsonList,ns){var retryTimes=5;var retryDelay=1000;function getImaiConfig(){for(let i=0;i<imaiJsonList.length;i++){let config=imaiJsonList[i];if(config.ns===ns){return config}}return null}function firePixel(url,delay,attempts){if(attempts<=0){return} const img=document.createElement("img");img.setAttribute("src",url);img.setAttribute("height","0");img.setAttribute("width","2");if(img.addEventListener){img.addEventListener("error",()=>{setTimeout(()=>{firePixel(url,delay,attempts-1)},delay)},!1)}} function addQueryParam(url,param,value){const separator=url.indexOf("?")===-1?"?":"&";return url+separator+encodeURIComponent(param)+"="+encodeURIComponent(value)} function getBeaconUrl(){const config=getImaiConfig();if(config){return addQueryParam(config.bcu,"m","28")}} function fireBeacon(){const url=getBeaconUrl();if(url){firePixel(url,retryDelay,retryTimes)}} function initializeAd(){fireAdInitialized()} function fireAdInitialized(){fireBeacon()} return{initializeAd}} function fireAdLoadCalledBeacon(config){const adInitializer=createAdLoadInitializer(config.imaiJsonList,config.ns);adInitializer.initializeAd()}
+        fireAdLoadCalledBeacon({
+        imaiJsonList: [{"tc":"\u003cimg src \u003d\"https://tr.blismedia.com/v1/impression/pixel?r\u003da89e3be2-0191-1000-da2e-5fa4176b0035\u0026amp;i\u003d1\u0026amp;c\u003d85729\u0026amp;ct\u003d128\u0026amp;b\u003d66666666\u0026amp;s\u003d33\u0026amp;ps\u003d33\u0026amp;cv\u003d0\u0026amp;t\u003d1725110828030050\u0026amp;sn\u003dWords%20With%20Friends%202%20Word%20Game\u0026amp;pn\u003dcom.zynga.words3\u0026amp;hc\u003d1\u0026amp;wnet\u003d1725114428\u0026amp;bk\u003d14415\u0026amp;pregs\u003d0\u0026amp;is\u003dapp\u0026amp;d\u003d5E4B4ABA-F066-4A1B-9ED9-F7F191F79108\u0026amp;ewh\u003d3jVqGg7JAn4JpnoDPWEHGUf6C4vaoDA7aobKFCWC6dn80GqQ1QDWYIo3as1faLfM\u0026amp;we\u003dTRACKING_NOTICE\u0026amp;fce\u003dTRACKING_NOTICE\u0026amp;ctrlfc\u003d0\u0026amp;biid\u003d1a24b5f8448d494898f8195403a8a009\u0026amp;vv\u003d4.2\u0026amp;wed\u003dXEyEmeLZOp5qfxtJGLROkLnWczHMJjBYRexlVc_NdLo\u0026amp;wp\u003d3.607982158660889\u0026amp;a\u003dTRACKING_NOTICE\" style\u003d\"display:none;\" /\u003e","bcu":"https://et-eus.w.inmobi.com/c.asm/HDaGvrjdhLqOBjS8ARX2BRsBWBgkNWU0YjRhYmEtZjA2Ni00YTFiLTllZDktZjdmMTkxZjc5MTA4HBUAFQAVAhXWEBUCJdYFGAVhMTA2NxgMY19jaGFydGJvb3N0GAYxMC42LjcAEwAcFzMzMzMzs0FAF2ZmZmZmZljAABUAGBhZMjl0TG5wNWJtZGhMbmR2Y21Sek13fn4WnM-vAxwcFv-_9-a_h-LhrgEWlf____-27_9LAAAVGBcAAAAAAMBSQBIUABwSGQUAFpzPrwMYA1VTRBbYufzzmWQZ9TeEnQHonQHkngHyqwH-qwGYrAGmrAGsrAG-rAHGrAHKrAHWrAHsrAH0rAGArQGOrQGmrQGqrQHKuwGIvQGSywGUywGWywGaywGSzAGazAGczAGgzAGkzAGyzAHIzAHWzAHozAGizgHW0wGa2QHg4gGA-gHmmQLg1wL-6gK4hwOUowXixQiG4gmM4gmS4gmW4gmY4gmc4gmi4gms4gmy4gnA4gm24wkhGGMMAAELAAEAAAAgZjliM2U4MWUwOWE3NDYzYTgyY2M0YjJiNmFiMTk1MzgKAAIAAAAAABdrLgoACAAAAAAAA_D7AAQAAkACxJul41P4CgAEAAAAAAA1884KAAUAAAAAADXzxwA4FwQAAUBSwAAAAAAABAACP5Jul41P3zsAGI8DAwABDggAAgAAAAwGAAUBQAYABgI4CwAHAAAABjEwLjYuNwsACAAAAANBUFAIAAkAAAAAAgAKAAgACwARI5QEAAw_hHrhR64UewgADQAAUC8IAA4AAE-UCwAPAAAAD0RFUklWRURfTEFUX0xPTggAEAAAAAAIABIAAUZzCwAUAAAAIGRiZDkxYWI5YmRmYjRiNzJhYTVmYjYzNDNlYTc3OThmCAAWAAAABQsAFwAAAAIxNAIAGAACABkBAgAbAQYAHAACAgAdAQIAIAECACEBAgAkAAoAJQAAAAAAAAACCwAoAAAAEGNvbS56eW5nYS53b3JkczMGACoG_wYAKwBeBgAsAAEGAC0AAwYAMAABCAAxAAABaAgAMgAAAtAGADMAAgIANgALADgAAAAYK1pxTnp4UGo2cURmVEhyV2lTTXFOUT09CwA6AAAADFVTUHJpdmFjeV92MQIAOwECAEYBCwBHAAAAJDVlNGI0YWJhLWYwNjYtNGExYi05ZWQ5LWY3ZjE5MWY3OTEwOAIASAEAGIQDCgABPN5Gp1vdFuALAAIAAAFCCwABAAAAEGNvbS56eW5nYS53b3JkczMDAAIABgAGlAkLAAcAAAAEUlRCRAYACAAQCwAJAAAAFDI1ODI5OTpCbGlzRXhjaGFuZ2U2CwAKAAAAFEJFMC0yMjQ5LTE3MTc4LTg1NzI5CAAOAAAFlAsADwAAAAc0ODBYMzIwBgAQAA4LABEAAAAgZjliM2U4MWUwOWE3NDYzYTgyY2M0YjJiNmFiMTk1MzgCABQBAwAVAQMAFwEDABgABgAZAAQGABxYzQIAHgADAB8BAgAiAAoAIwAAAAAAAAASAwAkCAwAJQYAAQAPAAMAJgELACcAAAAETnVsbAsAKQAAABYyNTgyOTk6MDpCbGlzRXhjaGFuZ2U2AgArAAIALAAGAC0ABQYALgASCwAxAAAAAxMAAA8AMwoAAAABAAAAAAAAWM0CADUBAAYABAAOCAAFAAAAAAYABgARBgAJAAYGAAoAIQQACz-iSRr8BMi9BgAMAAECAA0AABgLMC4wMDM1MzU4MTUAGIEDNti5_POZZLgMSU5URVJTVElUSUFMHDwcFv-_9-a_h-LhrgEWlf____-27_9LABYBIgAAOfU3gPoBhuIJjOIJkuIJkswBluIJmKwBmOIJmswBnMwBnOIJoMwBouIJos4BpMwBpqwBrKwBrOIJsuIJsswBvqwBwOIJxqwByMwByqwB1qwB1swB4OIB5J4B6MwB7KwB9KwB_uoCgK0BhJ0BiL0Bjq0BkssBlKMFlMsBlssBmtkBmssBpq0Bqq0BtuMJuIcDyrsB1tMB4sUI4NcC5pkC6J0B8qsB_qsBHACWqI6JARwVAAAsFQAAhQASGAgwLjAwMzYwOBwW_7_35r-H4uGuARaV_6eJ_bbv0UsAJcoBFQo4FVZENjIzMzUzMTgzMDY1NzU2OTg3OTQEdwAAAAAAAAAAHBcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAQBcAAAAAAAAAAAAZDBQAEREVBBESFwAAAAAAAAAAABgBOBwYFEB4MTgDtSsVCdVkodiLhV3YyLaNAAA/8dcba205","ns":"im_2383_","lpom":3,"fbom":3,"sc":true,"vbd":0,"vff":true,"vtc":"","fireBeaconExp":false,"forceOpenInChrome":false,"eventTrackerMap":{"CLICK":["https://c-eus.w.inmobi.com/c.asm/HDaGvrjdhLqOBjS8ARX2BRsBWBgkNWU0YjRhYmEtZjA2Ni00YTFiLTllZDktZjdmMTkxZjc5MTA4HBUAFQAVAhXWEBUCJdYFGAVhMTA2NxgMY19jaGFydGJvb3N0GAYxMC42LjcAEwEcFzMzMzMzs0FAF2ZmZmZmZljAABUAGBhZMjl0TG5wNWJtZGhMbmR2Y21Sek13fn4WnM-vAxwcFv-_9-a_h-LhrgEWlf____-27_9LAAAVGBcAAAAAAMBSQBIUABwSGQUAFpzPrwMYA1VTRBbYufzzmWQZ9TeEnQHonQHkngHyqwH-qwGYrAGmrAGsrAG-rAHGrAHKrAHWrAHsrAH0rAGArQGOrQGmrQGqrQHKuwGIvQGSywGUywGWywGaywGSzAGazAGczAGgzAGkzAGyzAHIzAHWzAHozAGizgHW0wGa2QHg4gGA-gHmmQLg1wL-6gK4hwOUowXixQiG4gmM4gmS4gmW4gmY4gmc4gmi4gms4gmy4gnA4gm24wkhGGMMAAELAAEAAAAgZjliM2U4MWUwOWE3NDYzYTgyY2M0YjJiNmFiMTk1MzgKAAIAAAAAABdrLgoACAAAAAAAA_D7AAQAAkACxJul41P4CgAEAAAAAAA1884KAAUAAAAAADXzxwA4FwQAAUBSwAAAAAAABAACP5Jul41P3zsAGI8DAwABDggAAgAAAAwGAAUBQAYABgI4CwAHAAAABjEwLjYuNwsACAAAAANBUFAIAAkAAAAAAgAKAAgACwARI5QEAAw_hHrhR64UewgADQAAUC8IAA4AAE-UCwAPAAAAD0RFUklWRURfTEFUX0xPTggAEAAAAAAIABIAAUZzCwAUAAAAIGRiZDkxYWI5YmRmYjRiNzJhYTVmYjYzNDNlYTc3OThmCAAWAAAABQsAFwAAAAIxNAIAGAACABkBAgAbAQYAHAACAgAdAQIAIAECACEBAgAkAAoAJQAAAAAAAAACCwAoAAAAEGNvbS56eW5nYS53b3JkczMGACoG_wYAKwBeBgAsAAEGAC0AAwYAMAABCAAxAAABaAgAMgAAAtAGADMAAgIANgALADgAAAAYK1pxTnp4UGo2cURmVEhyV2lTTXFOUT09CwA6AAAADFVTUHJpdmFjeV92MQIAOwECAEYBCwBHAAAAJDVlNGI0YWJhLWYwNjYtNGExYi05ZWQ5LWY3ZjE5MWY3OTEwOAIASAEAGIQDCgABPN5Gp1vdFuALAAIAAAFCCwABAAAAEGNvbS56eW5nYS53b3JkczMDAAIABgAGlAkLAAcAAAAEUlRCRAYACAAQCwAJAAAAFDI1ODI5OTpCbGlzRXhjaGFuZ2U2CwAKAAAAFEJFMC0yMjQ5LTE3MTc4LTg1NzI5CAAOAAAFlAsADwAAAAc0ODBYMzIwBgAQAA4LABEAAAAgZjliM2U4MWUwOWE3NDYzYTgyY2M0YjJiNmFiMTk1MzgCABQBAwAVAQMAFwEDABgABgAZAAQGABxYzQIAHgADAB8BAgAiAAoAIwAAAAAAAAASAwAkCAwAJQYAAQAPAAMAJgELACcAAAAETnVsbAsAKQAAABYyNTgyOTk6MDpCbGlzRXhjaGFuZ2U2AgArAAIALAAGAC0ABQYALgASCwAxAAAAAxMAAA8AMwoAAAABAAAAAAAAWM0CADUBAAYABAAOCAAFAAAAAAYABgARBgAJAAYGAAoAIQQACz-iSRr8BMi9BgAMAAECAA0AABgLMC4wMDM1MzU4MTUAGIEDNti5_POZZLgMSU5URVJTVElUSUFMHDwcFv-_9-a_h-LhrgEWlf____-27_9LABYBIgAAOfU3gPoBhuIJjOIJkuIJkswBluIJmKwBmOIJmswBnMwBnOIJoMwBouIJos4BpMwBpqwBrKwBrOIJsuIJsswBvqwBwOIJxqwByMwByqwB1qwB1swB4OIB5J4B6MwB7KwB9KwB_uoCgK0BhJ0BiL0Bjq0BkssBlKMFlMsBlssBmtkBmssBpq0Bqq0BtuMJuIcDyrsB1tMB4sUI4NcC5pkC6J0B8qsB_qsBHACWqI6JARwVAAAsFQAAhQASGAgwLjAwMzYwOBwW_7_35r-H4uGuARaV_6eJ_bbv0UsAJcoBFQo4FVZENjIzMzUzMTgzMDY1NzU2OTg3OTQEdwAAAAAAAAAAHBcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAQBcAAAAAAAAAAAAZDBQAEREVBBESFwAAAAAAAAAAABgBOAA/f3c5666c?at\u003d2\u0026am\u003d7\u0026ct\u003d$TS\u0026lt\u003d$LTS\u0026st\u003d$STS"]},"omidMacros":{"$LIMIT_AD_TRACKING":"0","#GEO_CC":"us","$SDK_VERSION_ID":"a1067","$GEO_LAT":"35.4","#GEO_LAT":"35.4","$RSAID":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","#IDA":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","#GEO_LNG":"-97.6","#LIMIT_AD_TRACKING":"0","$HANDSET_MAKE":"OnePlus","#HANDSET_MAKE":"OnePlus","#PARTNER_ADV_ID":"0","$HANDSET_LANG":"en","#HANDSET_LANG":"en","$SI_BLIND":"RKGD63IT","$GEO_LNG":"-97.6","#RSAID":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","#ADVERTISER_ID":"f9b3e81e09a7463a82cc4b2b6ab19538","$IMP_CB":"a89e3be2-0191-1000-da2e-5fa4176b0035","$GEO_CC":"us","#DEAL_ID":"0","#PLACEMENT_DIMENSION":"480X320","$PLACEMENT_DIMENSION":"480X320","$HANDSET_NAME":"CPH2513","#SDK_VERSION_ID":"a1067","#AD_SLOT":"480X320","#HANDSET_NAME":"CPH2513","$ADVERTISER_ID":"f9b3e81e09a7463a82cc4b2b6ab19538","#SI_BLIND":"RKGD63IT","#SI_RAW":"com.zynga.words3","#IMP_CB":"a89e3be2-0191-1000-da2e-5fa4176b0035","$HANDSET_TYPE":"SMARTPHONE","#HANDSET_TYPE":"SMARTPHONE","$DEAL_ID":"0","#GPID":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","#CREATIVE_ID":"VD6233531830657569879","$BLINDED_SITE_ID":"RKGD63IT","$SI_RAW":"com.zynga.words3","#BLINDED_SITE_ID":"RKGD63IT","$IDA":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","$CREATIVE_ID":"VD6233531830657569879","$GPID":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","$PARTNER_ADV_ID":"0","$AD_SLOT":"480X320"},"zMoatRt":"WebView3","loadBeacon":""}],
+        ns: 'im_2383_'
+        });
+        } catch (e) {
+        console.log('Error in ad load called', e);
+        }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    function promiseAll(e){return new Promise((function(n,t){if(!Array.isArray(e))return t(new TypeError("promises must be an array"));var i=[],o=e.length;0===o&&n(i),e.forEach((function(e,r){Promise.resolve(e).then((function(e){i[r]=e,0===--o&&n(i)})).catch((function(e){t(e)}))}))}))}var fileLink="https://supply.inmobicdn.net/test/1kb.jpg?n="+Math.random(),fileSize=1295,setCookie=function(e,n,t){var i=new Date;i.setTime(i.getTime()+24*t*60*60*1e3);var o="expires="+i.toUTCString();document.cookie=e+"="+n+";"+o+";path=/;SameSite=Strict;"},getCookie=function(e){for(var n=e+"=",t=decodeURIComponent(document.cookie).split(";"),i=0;i<t.length;i++){for(var o=t[i];" "===o.charAt(0);)o=o.substring(1);if(0===o.indexOf(n))return o.substring(n.length,o.length)}return""},fetchImage=function(){return new Promise((function(e,n){var t=new Image,i=(new Date).getTime();t.src=fileLink,t.onload=function(){var n,t=(new Date).getTime();n=window.performance?window.performance.getEntries().find((e=>"img"===e.initiatorType&&e.name===fileLink)).duration:t-i,e(n)},t.onerror=function(){n("Failed to calculate network speed.")}}))},fetchHead=function(){return new Promise((function(e,n){var t=new XMLHttpRequest,i=(new Date).getTime();t.open("HEAD",fileLink,!0),t.onload=function(){var n,t=(new Date).getTime();n=window.performance?window.performance.getEntries().find((e=>"xmlhttprequest"===e.initiatorType&&e.name===fileLink)).duration:t-i,e(n)},t.onerror=function(){n("Failed to calculate network speed.")},t.send()}))},calculateSpeed=async function(){try{var e,n=await promiseAll([fetchImage(),fetchHead()]),t=n[0],i=n[1],o=8*fileSize;e=t===i?getCookie("lastObservedSpeed")||.1:(o/((Math.max(t,i)-Math.min(t,i))/1e3)/1024).toFixed(2);try{setCookie("lastObservedSpeed",e,1)}catch(e){}return e}catch(e){}},getNetworkSpeed=async function(){if(window.navigator&&window.navigator.connection){var e=1e3*window.navigator.connection.downlink;return window.networkSpeed=e,e}e=await calculateSpeed();return window.networkSpeed=e,e};
+    // trigger network speed check
+    getNetworkSpeed();
+</script>
+
+<script type="text/javascript">
+    var podList = [];
+                var beaconSuffix = "";
+        var pod = {};
+                                            pod.vast = "${VAST_CREATIVE}";
+        pod.orientation = "landscape";
+                                    pod.demandBundleId = null
+                    pod.ns = "im_2383_";
+        podList.push(pod);
+
+    var i=0;
+                var pod = podList[i];
+        //check for null values
+                        pod.skan = null
+                    i = i+1
+
+    var j=0;
+                var pod = podList[j];
+        //check for null values
+                        pod.skoverlay = null
+                    j = j+1
+
+    // FIXME:Define a type for the below object
+    var templateData = {
+        namespace: 'im_2383_',
+        secure: 'true',
+        isPod: 'false',
+        adChoicesUrl: 'https://www.inmobi.com/ad-opt-out?i=%7B%22GPID%22%3A%225e4b4aba-f066-4a1b-9ed9-f7f191f79108%22%7D',
+        supplyWidth: '320',
+        supplyHeight: '568',
+        rewarded: 'false',
+        maxPodDuration: '90',
+        vpaidDisabled: 'false',
+        sdkVersion: 'a1067',
+        soundOn: 'true',
+        pubVidDuration: '60',
+        omidEnabled: 'true',
+        omidJsSessionClientVersion: '1.3.37-iab3566',
+        skipDelay: '5',
+        closeInsteadSkip: 'false',
+        autoClose: 'false',
+        endCardCloseDelaySec: '10',
+        rvExpEnabled: 'false',
+        rvExpScale: '0.0',
+        experienceID: '1',
+        templateExperienceType: 'Tapvista',
+        fallbackExperienceType: 'BrandBase',
+        pubAppOrientation: 'BOTH',
+        dynamicVideoOrientation: 'false',
+        incentiveJson: '{}',
+        isSdkPod: 'false',
+        disableVideoNonSkippableExp: 'false',
+        disableEVCSkipExperience: 'false',
+        pods: podList,
+        imaiConfigList: [{"tc":"\u003cimg src \u003d\"https://tr.blismedia.com/v1/impression/pixel?r\u003da89e3be2-0191-1000-da2e-5fa4176b0035\u0026amp;i\u003d1\u0026amp;c\u003d85729\u0026amp;ct\u003d128\u0026amp;b\u003d66666666\u0026amp;s\u003d33\u0026amp;ps\u003d33\u0026amp;cv\u003d0\u0026amp;t\u003d1725110828030050\u0026amp;sn\u003dWords%20With%20Friends%202%20Word%20Game\u0026amp;pn\u003dcom.zynga.words3\u0026amp;hc\u003d1\u0026amp;wnet\u003d1725114428\u0026amp;bk\u003d14415\u0026amp;pregs\u003d0\u0026amp;is\u003dapp\u0026amp;d\u003d5E4B4ABA-F066-4A1B-9ED9-F7F191F79108\u0026amp;ewh\u003d3jVqGg7JAn4JpnoDPWEHGUf6C4vaoDA7aobKFCWC6dn80GqQ1QDWYIo3as1faLfM\u0026amp;we\u003dTRACKING_NOTICE\u0026amp;fce\u003dTRACKING_NOTICE\u0026amp;ctrlfc\u003d0\u0026amp;biid\u003d1a24b5f8448d494898f8195403a8a009\u0026amp;vv\u003d4.2\u0026amp;wed\u003dXEyEmeLZOp5qfxtJGLROkLnWczHMJjBYRexlVc_NdLo\u0026amp;wp\u003d3.607982158660889\u0026amp;a\u003dTRACKING_NOTICE\" style\u003d\"display:none;\" /\u003e","bcu":"https://et-eus.w.inmobi.com/c.asm/HDaGvrjdhLqOBjS8ARX2BRsBWBgkNWU0YjRhYmEtZjA2Ni00YTFiLTllZDktZjdmMTkxZjc5MTA4HBUAFQAVAhXWEBUCJdYFGAVhMTA2NxgMY19jaGFydGJvb3N0GAYxMC42LjcAEwAcFzMzMzMzs0FAF2ZmZmZmZljAABUAGBhZMjl0TG5wNWJtZGhMbmR2Y21Sek13fn4WnM-vAxwcFv-_9-a_h-LhrgEWlf____-27_9LAAAVGBcAAAAAAMBSQBIUABwSGQUAFpzPrwMYA1VTRBbYufzzmWQZ9TeEnQHonQHkngHyqwH-qwGYrAGmrAGsrAG-rAHGrAHKrAHWrAHsrAH0rAGArQGOrQGmrQGqrQHKuwGIvQGSywGUywGWywGaywGSzAGazAGczAGgzAGkzAGyzAHIzAHWzAHozAGizgHW0wGa2QHg4gGA-gHmmQLg1wL-6gK4hwOUowXixQiG4gmM4gmS4gmW4gmY4gmc4gmi4gms4gmy4gnA4gm24wkhGGMMAAELAAEAAAAgZjliM2U4MWUwOWE3NDYzYTgyY2M0YjJiNmFiMTk1MzgKAAIAAAAAABdrLgoACAAAAAAAA_D7AAQAAkACxJul41P4CgAEAAAAAAA1884KAAUAAAAAADXzxwA4FwQAAUBSwAAAAAAABAACP5Jul41P3zsAGI8DAwABDggAAgAAAAwGAAUBQAYABgI4CwAHAAAABjEwLjYuNwsACAAAAANBUFAIAAkAAAAAAgAKAAgACwARI5QEAAw_hHrhR64UewgADQAAUC8IAA4AAE-UCwAPAAAAD0RFUklWRURfTEFUX0xPTggAEAAAAAAIABIAAUZzCwAUAAAAIGRiZDkxYWI5YmRmYjRiNzJhYTVmYjYzNDNlYTc3OThmCAAWAAAABQsAFwAAAAIxNAIAGAACABkBAgAbAQYAHAACAgAdAQIAIAECACEBAgAkAAoAJQAAAAAAAAACCwAoAAAAEGNvbS56eW5nYS53b3JkczMGACoG_wYAKwBeBgAsAAEGAC0AAwYAMAABCAAxAAABaAgAMgAAAtAGADMAAgIANgALADgAAAAYK1pxTnp4UGo2cURmVEhyV2lTTXFOUT09CwA6AAAADFVTUHJpdmFjeV92MQIAOwECAEYBCwBHAAAAJDVlNGI0YWJhLWYwNjYtNGExYi05ZWQ5LWY3ZjE5MWY3OTEwOAIASAEAGIQDCgABPN5Gp1vdFuALAAIAAAFCCwABAAAAEGNvbS56eW5nYS53b3JkczMDAAIABgAGlAkLAAcAAAAEUlRCRAYACAAQCwAJAAAAFDI1ODI5OTpCbGlzRXhjaGFuZ2U2CwAKAAAAFEJFMC0yMjQ5LTE3MTc4LTg1NzI5CAAOAAAFlAsADwAAAAc0ODBYMzIwBgAQAA4LABEAAAAgZjliM2U4MWUwOWE3NDYzYTgyY2M0YjJiNmFiMTk1MzgCABQBAwAVAQMAFwEDABgABgAZAAQGABxYzQIAHgADAB8BAgAiAAoAIwAAAAAAAAASAwAkCAwAJQYAAQAPAAMAJgELACcAAAAETnVsbAsAKQAAABYyNTgyOTk6MDpCbGlzRXhjaGFuZ2U2AgArAAIALAAGAC0ABQYALgASCwAxAAAAAxMAAA8AMwoAAAABAAAAAAAAWM0CADUBAAYABAAOCAAFAAAAAAYABgARBgAJAAYGAAoAIQQACz-iSRr8BMi9BgAMAAECAA0AABgLMC4wMDM1MzU4MTUAGIEDNti5_POZZLgMSU5URVJTVElUSUFMHDwcFv-_9-a_h-LhrgEWlf____-27_9LABYBIgAAOfU3gPoBhuIJjOIJkuIJkswBluIJmKwBmOIJmswBnMwBnOIJoMwBouIJos4BpMwBpqwBrKwBrOIJsuIJsswBvqwBwOIJxqwByMwByqwB1qwB1swB4OIB5J4B6MwB7KwB9KwB_uoCgK0BhJ0BiL0Bjq0BkssBlKMFlMsBlssBmtkBmssBpq0Bqq0BtuMJuIcDyrsB1tMB4sUI4NcC5pkC6J0B8qsB_qsBHACWqI6JARwVAAAsFQAAhQASGAgwLjAwMzYwOBwW_7_35r-H4uGuARaV_6eJ_bbv0UsAJcoBFQo4FVZENjIzMzUzMTgzMDY1NzU2OTg3OTQEdwAAAAAAAAAAHBcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAQBcAAAAAAAAAAAAZDBQAEREVBBESFwAAAAAAAAAAABgBOBwYFEB4MTgDtSsVCdVkodiLhV3YyLaNAAA/8dcba205","ns":"im_2383_","lpom":3,"fbom":3,"sc":true,"vbd":0,"vff":true,"vtc":"","fireBeaconExp":false,"forceOpenInChrome":false,"eventTrackerMap":{"CLICK":["https://c-eus.w.inmobi.com/c.asm/HDaGvrjdhLqOBjS8ARX2BRsBWBgkNWU0YjRhYmEtZjA2Ni00YTFiLTllZDktZjdmMTkxZjc5MTA4HBUAFQAVAhXWEBUCJdYFGAVhMTA2NxgMY19jaGFydGJvb3N0GAYxMC42LjcAEwEcFzMzMzMzs0FAF2ZmZmZmZljAABUAGBhZMjl0TG5wNWJtZGhMbmR2Y21Sek13fn4WnM-vAxwcFv-_9-a_h-LhrgEWlf____-27_9LAAAVGBcAAAAAAMBSQBIUABwSGQUAFpzPrwMYA1VTRBbYufzzmWQZ9TeEnQHonQHkngHyqwH-qwGYrAGmrAGsrAG-rAHGrAHKrAHWrAHsrAH0rAGArQGOrQGmrQGqrQHKuwGIvQGSywGUywGWywGaywGSzAGazAGczAGgzAGkzAGyzAHIzAHWzAHozAGizgHW0wGa2QHg4gGA-gHmmQLg1wL-6gK4hwOUowXixQiG4gmM4gmS4gmW4gmY4gmc4gmi4gms4gmy4gnA4gm24wkhGGMMAAELAAEAAAAgZjliM2U4MWUwOWE3NDYzYTgyY2M0YjJiNmFiMTk1MzgKAAIAAAAAABdrLgoACAAAAAAAA_D7AAQAAkACxJul41P4CgAEAAAAAAA1884KAAUAAAAAADXzxwA4FwQAAUBSwAAAAAAABAACP5Jul41P3zsAGI8DAwABDggAAgAAAAwGAAUBQAYABgI4CwAHAAAABjEwLjYuNwsACAAAAANBUFAIAAkAAAAAAgAKAAgACwARI5QEAAw_hHrhR64UewgADQAAUC8IAA4AAE-UCwAPAAAAD0RFUklWRURfTEFUX0xPTggAEAAAAAAIABIAAUZzCwAUAAAAIGRiZDkxYWI5YmRmYjRiNzJhYTVmYjYzNDNlYTc3OThmCAAWAAAABQsAFwAAAAIxNAIAGAACABkBAgAbAQYAHAACAgAdAQIAIAECACEBAgAkAAoAJQAAAAAAAAACCwAoAAAAEGNvbS56eW5nYS53b3JkczMGACoG_wYAKwBeBgAsAAEGAC0AAwYAMAABCAAxAAABaAgAMgAAAtAGADMAAgIANgALADgAAAAYK1pxTnp4UGo2cURmVEhyV2lTTXFOUT09CwA6AAAADFVTUHJpdmFjeV92MQIAOwECAEYBCwBHAAAAJDVlNGI0YWJhLWYwNjYtNGExYi05ZWQ5LWY3ZjE5MWY3OTEwOAIASAEAGIQDCgABPN5Gp1vdFuALAAIAAAFCCwABAAAAEGNvbS56eW5nYS53b3JkczMDAAIABgAGlAkLAAcAAAAEUlRCRAYACAAQCwAJAAAAFDI1ODI5OTpCbGlzRXhjaGFuZ2U2CwAKAAAAFEJFMC0yMjQ5LTE3MTc4LTg1NzI5CAAOAAAFlAsADwAAAAc0ODBYMzIwBgAQAA4LABEAAAAgZjliM2U4MWUwOWE3NDYzYTgyY2M0YjJiNmFiMTk1MzgCABQBAwAVAQMAFwEDABgABgAZAAQGABxYzQIAHgADAB8BAgAiAAoAIwAAAAAAAAASAwAkCAwAJQYAAQAPAAMAJgELACcAAAAETnVsbAsAKQAAABYyNTgyOTk6MDpCbGlzRXhjaGFuZ2U2AgArAAIALAAGAC0ABQYALgASCwAxAAAAAxMAAA8AMwoAAAABAAAAAAAAWM0CADUBAAYABAAOCAAFAAAAAAYABgARBgAJAAYGAAoAIQQACz-iSRr8BMi9BgAMAAECAA0AABgLMC4wMDM1MzU4MTUAGIEDNti5_POZZLgMSU5URVJTVElUSUFMHDwcFv-_9-a_h-LhrgEWlf____-27_9LABYBIgAAOfU3gPoBhuIJjOIJkuIJkswBluIJmKwBmOIJmswBnMwBnOIJoMwBouIJos4BpMwBpqwBrKwBrOIJsuIJsswBvqwBwOIJxqwByMwByqwB1qwB1swB4OIB5J4B6MwB7KwB9KwB_uoCgK0BhJ0BiL0Bjq0BkssBlKMFlMsBlssBmtkBmssBpq0Bqq0BtuMJuIcDyrsB1tMB4sUI4NcC5pkC6J0B8qsB_qsBHACWqI6JARwVAAAsFQAAhQASGAgwLjAwMzYwOBwW_7_35r-H4uGuARaV_6eJ_bbv0UsAJcoBFQo4FVZENjIzMzUzMTgzMDY1NzU2OTg3OTQEdwAAAAAAAAAAHBcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAABcAAAAAAAAAQBcAAAAAAAAAAAAZDBQAEREVBBESFwAAAAAAAAAAABgBOAA/f3c5666c?at\u003d2\u0026am\u003d7\u0026ct\u003d$TS\u0026lt\u003d$LTS\u0026st\u003d$STS"]},"omidMacros":{"$LIMIT_AD_TRACKING":"0","#GEO_CC":"us","$SDK_VERSION_ID":"a1067","$GEO_LAT":"35.4","#GEO_LAT":"35.4","$RSAID":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","#IDA":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","#GEO_LNG":"-97.6","#LIMIT_AD_TRACKING":"0","$HANDSET_MAKE":"OnePlus","#HANDSET_MAKE":"OnePlus","#PARTNER_ADV_ID":"0","$HANDSET_LANG":"en","#HANDSET_LANG":"en","$SI_BLIND":"RKGD63IT","$GEO_LNG":"-97.6","#RSAID":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","#ADVERTISER_ID":"f9b3e81e09a7463a82cc4b2b6ab19538","$IMP_CB":"a89e3be2-0191-1000-da2e-5fa4176b0035","$GEO_CC":"us","#DEAL_ID":"0","#PLACEMENT_DIMENSION":"480X320","$PLACEMENT_DIMENSION":"480X320","$HANDSET_NAME":"CPH2513","#SDK_VERSION_ID":"a1067","#AD_SLOT":"480X320","#HANDSET_NAME":"CPH2513","$ADVERTISER_ID":"f9b3e81e09a7463a82cc4b2b6ab19538","#SI_BLIND":"RKGD63IT","#SI_RAW":"com.zynga.words3","#IMP_CB":"a89e3be2-0191-1000-da2e-5fa4176b0035","$HANDSET_TYPE":"SMARTPHONE","#HANDSET_TYPE":"SMARTPHONE","$DEAL_ID":"0","#GPID":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","#CREATIVE_ID":"VD6233531830657569879","$BLINDED_SITE_ID":"RKGD63IT","$SI_RAW":"com.zynga.words3","#BLINDED_SITE_ID":"RKGD63IT","$IDA":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","$CREATIVE_ID":"VD6233531830657569879","$GPID":"5e4b4aba-f066-4a1b-9ed9-f7f191f79108","$PARTNER_ADV_ID":"0","$AD_SLOT":"480X320"},"zMoatRt":"WebView3","loadBeacon":""}],
+        sdkHandlerRequired: 'false',
+        dspMoatScriptPresent: 'false',
+        omidConfigList: [{"sdkVersion":"a1067","omidPartnerName":"Inmobi","namespace":"im_2383_","sessionClientVersion":"1.3.37-iab3566"}],
+        videoViewability: 'true',
+        omid13: 'true',
+        closeButtonForAgeRestriction: 'false',
+        blankAdDetection:{
+            shouldDetectBlankAd: 'false',
+            detectBlankAdDelay: '4000',
+            detectBlankAdLabel: 'blank-space-percentage',
+            blankAdGutter:'10',
+            centerMarginThreshold:'20',
+            distanceFromViewport:'100',
+            fireBlankAdDetectionBeacon:'false',
+            fireCreativeCenteredBeacon:'false',
+            fireCreativeOutOfViewportBeacon:'false',
+        },
+        logInfo: {
+            publisherID: 'dbd91ab9bdfb4b72aa5fb6343ea7798f',
+            placementID: '1721463967340',
+            sdkVersion: 'a1067',
+            impressionID: 'a89e3be2-0191-1000-da2e-2124176b0035',
+            bundleID: 'com.zynga.words3',
+            integrationType: 'Android Sdk',
+            integrationDirect: 'c_chartboost',
+            templateID: '4386020771720140512',
+            aBChannel: 'CHARTBOOST',
+            creativeID: 'VD6233531830657569879',
+            creativeIdentifier: '<adv>f9b3e81e09a7463a82cc4b2b6ab19538<crid>VD6233531830657569879',
+            isServerSideLogging: 'true',
+            loggerScale: '0.001',
+            dealId: '$dealId',
+            dspId: 'f9b3e81e09a7463a82cc4b2b6ab19538'
+        },
+        adChoiceIconVariant: 'VARIANT_11',
+        brandEndcardCtaText: 'Go to Advertiser',
+        isDisableAutoOpenSkStore: false,
+        clickEventType: '$enhancedClickEventType',
+        videoTouchEnabled: 'false',
+        endcardTouchEnabled: 'false',
+        vxec: '$vxec',
+        autoStore: 'false',
+        autoStoreClick: 'false',
+        endcardOverlayEnabled: 'false',
+        backendTemplateExperienceType: 'BrandBase',
+        enableSkipBeacons: 'false',
+        aDomain: 'ford.com',
+        disableFullEndcardClick: 'false',
+        videoEndCardCloseDelay: '3',
+        ievcEnabled: 'false',
+        ievcOffset: '10',
+        showImmersiveMode: 'true',
+        adReadyOnEvent: 'video_attach',
+        videoOverlayEnabled: 'false',
+        showEndCardTimer: 'false',
+        enableSDKCrashFix: 'false',
+        fireClickViaPing: 'false'
+    }
+    window.templateData = templateData;
+</script>
+
+<script>
+    var videoCustomBeaconConfig = {
+        enablePerformanceBeacon: false,
+        enableFunnelBeacon: false,
+        enableVASTMetrics: false,
+        enableVideoPlayerMetrics: false,
+        enableHlsMetrics: false,
+        enableVideoComponentsTrackingBeacons: false,
+        enableViewabilityBeacons: false,
+    };
+    var featureFlagConfig = {
+        enableHls: false,
+    }
+
+    window.videoCustomBeaconConfig = videoCustomBeaconConfig;
+    window.featureFlag = featureFlagConfig;
+</script>
+
+<script>
+    var mraidScriptElement = document.createElement('script');
+    mraidScriptElement.setAttribute("type", "text/javascript");
+    mraidScriptElement.setAttribute("crossorigin", "anonymous");
+    mraidScriptElement.async = false;
+    mraidScriptElement.defer = true;
+    document.body.appendChild(mraidScriptElement);
+    mraidScriptElement.src = useSdkCache('https://supply.inmobicdn.net/sdk/sdk/1075/android/mraid.js');
+</script>
+
+<script>
+    var omSessionScriptElement = document.createElement('script');
+    omSessionScriptElement.setAttribute("type", "text/javascript");
+    omSessionScriptElement.setAttribute("crossorigin", "anonymous");
+    omSessionScriptElement.async = false;
+    omSessionScriptElement.defer = true;
+    document.body.appendChild(omSessionScriptElement);
+    omSessionScriptElement.src = useSdkCache('https://supply.inmobicdn.net/javascript/1.3.37/omid-session-client.js');
+</script>
+<script>
+    var omSdkScriptElement = document.createElement('script');
+    omSdkScriptElement.setAttribute("type", "text/javascript");
+    omSdkScriptElement.setAttribute("crossorigin", "anonymous");
+    omSdkScriptElement.async = false;
+    omSdkScriptElement.defer = true;
+    document.body.appendChild(omSdkScriptElement);
+    omSdkScriptElement.src = useSdkCache('https://supply.inmobicdn.net/javascript/1.3.37/omsdk-service.js');
+</script>
+
+
+<script>
+    try {
+        var scriptElement = document.createElement('script');
+        scriptElement.setAttribute("type", "text/javascript");
+        scriptElement.setAttribute("crossorigin", "anonymous");
+        scriptElement.async = false;
+        scriptElement.defer = true;
+        if(window.isES6Supported) {
+            scriptElement.src = useSdkCache('https://supply.inmobicdn.net/lagom-assets/main.1.3.63.bundle.js');
+        } else {
+            scriptElement.src = useSdkCache('https://supply.inmobicdn.net/lagom-assets/main.1.3.63.es5.bundle.js');
+        }
+        document.body.appendChild(scriptElement);
+    } catch (e) {
+        var scriptEle = document.createElement('script');
+        scriptEle.setAttribute("type", "text/javascript");
+        scriptEle.async = false;
+        scriptEle.defer = true;
+        document.body.appendChild(scriptEle);
+        scriptEle.src = useSdkCache('https://supply.inmobicdn.net/lagom-assets/main.1.3.63.bundle.js');
+    }
+</script>
+</body>
+</html>

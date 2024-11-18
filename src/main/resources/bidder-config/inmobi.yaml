@@ -1,6 +1,7 @@
 adapters:
   inmobi:
-    endpoint: https://api.w.inmobi.com/showad/openrtb/bidder/prebid
+#    endpoint: http://127.0.0.1:5000/ads
+    endpoint: https://api.w.inmobi.com/showad/ortb/imsdk
     meta-info:
       maintainer-email: prebid-support@inmobi.com
       app-media-types:
