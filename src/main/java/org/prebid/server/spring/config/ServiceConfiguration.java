@@ -1034,7 +1034,9 @@ public class ServiceConfiguration {
             Metrics metrics,
             JacksonMapper mapper,
             @Value("${logging.sampling-rate:0.01}") double logSamplingRate,
-            @Value("${auction.strict-app-site-dooh:false}") boolean enabledStrictAppSiteDoohValidation) {
+            @Value("${auction.strict-app-site-dooh:false}") boolean enabledStrictAppSiteDoohValidation,
+            @Value("${settings.fail-on-disabled-bidders:true}") boolean failOnDisabledBidders,
+            @Value("${settings.fail-on-unknown-bidders:true}") boolean failOnUnknownBidders) {
 
         return new RequestValidator(
                 bidderCatalog,
@@ -1042,7 +1044,9 @@ public class ServiceConfiguration {
                 metrics,
                 mapper,
                 logSamplingRate,
-                enabledStrictAppSiteDoohValidation);
+                enabledStrictAppSiteDoohValidation,
+                failOnDisabledBidders,
+                failOnUnknownBidders);
     }
 
     @Bean
