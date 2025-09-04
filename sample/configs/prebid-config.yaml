@@ -1,7 +1,5 @@
 status-response: "ok"
 adapters:
-  inmobi:
-    enabled: true
   appnexus:
     enabled: true
   ix:
@@ -20,16 +18,17 @@ cache:
   path: /cache
   query: uuid=
 settings:
-  enforce-valid-account: true
+  enforce-valid-account: false
   generate-storedrequest-bidrequest-id: true
   filesystem:
     settings-filename: sample/configs/sample-app-settings.yaml
-    stored-requests-dir: sample/storedrequests
-    stored-imps-dir: sample/storedimps
-    stored-responses-dir: sample/storedresponses
+    stored-requests-dir: sample
+    stored-imps-dir: sample
+    profiles-dir: sample
+    stored-responses-dir: sample
     categories-dir:
 gdpr:
-  default-value: 0
+  default-value: 1
   vendorlist:
     v2:
       cache-dir: /var/tmp/vendor2
