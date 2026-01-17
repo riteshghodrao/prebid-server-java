@@ -1,0 +1,37 @@
+{
+  "id": "banner_300x600",
+  "banner": {
+    "format": [
+      {
+        "w": 300,
+        "h": 600
+      }
+    ],
+    "w": 300,
+    "h": 600
+  },
+  "ext": {
+    "prebid": {
+      "bidder": {
+        "appnexus": {
+          "placementId": 13144370
+        },
+        "pubmatic": {
+          "publisherId": "156209",
+          "adSlot": "300x600"
+        },
+        "rubicon": {
+          "accountId": 1001,
+          "siteId": 113932,
+          "zoneId": 535510
+        }
+      },
+      "storedbidresponse": [
+        {
+          "bidder": "appnexus",
+          "id": "response_300x600"
+        }
+      ]
+    }
+  }
+}

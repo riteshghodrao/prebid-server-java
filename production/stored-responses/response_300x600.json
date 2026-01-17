@@ -1,0 +1,38 @@
+{
+  "id": "response_300x600",
+  "seatbid": [
+    {
+      "bid": [
+        {
+          "id": "bid-300x600-1",
+          "impid": "imp4",
+          "price": 2.00,
+          "adm": "<div style=\"width:300px;height:600px;background-color:#f0f0f0;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center;\">300x600 Half Page Ad</div>",
+          "adomain": [
+            "example.com"
+          ],
+          "iurl": "https://example.com/creative-preview-300x600.jpg",
+          "crid": "creative-300x600-001",
+          "w": 300,
+          "h": 600,
+          "mtype": 1,
+          "ext": {
+            "prebid": {
+              "meta": {
+                "adaptercode": "appnexus"
+              },
+              "targeting": {
+                "hb_bidder": "appnexus",
+                "hb_pb": "2.00",
+                "hb_size": "300x600"
+              },
+              "type": "banner"
+            }
+          }
+        }
+      ],
+      "seat": "appnexus"
+    }
+  ],
+  "cur": "USD"
+}

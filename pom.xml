@@ -233,6 +233,10 @@
             <groupId>io.github.jamsesso</groupId>
             <artifactId>json-logic-java</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-monitoring</artifactId>
+        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

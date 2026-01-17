@@ -1,0 +1,38 @@
+{
+  "id": "response_160x600",
+  "seatbid": [
+    {
+      "bid": [
+        {
+          "id": "bid-160x600-1",
+          "impid": "imp3",
+          "price": 1.50,
+          "adm": "<div style=\"width:160px;height:600px;background-color:#f0f0f0;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center;\">160x600 Skyscraper Ad</div>",
+          "adomain": [
+            "example.com"
+          ],
+          "iurl": "https://example.com/creative-preview-160x600.jpg",
+          "crid": "creative-160x600-001",
+          "w": 160,
+          "h": 600,
+          "mtype": 1,
+          "ext": {
+            "prebid": {
+              "meta": {
+                "adaptercode": "appnexus"
+              },
+              "targeting": {
+                "hb_bidder": "appnexus",
+                "hb_pb": "1.50",
+                "hb_size": "160x600"
+              },
+              "type": "banner"
+            }
+          }
+        }
+      ],
+      "seat": "appnexus"
+    }
+  ],
+  "cur": "USD"
+}

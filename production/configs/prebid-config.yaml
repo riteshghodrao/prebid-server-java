@@ -1,0 +1,47 @@
+status-response: "ok"
+adapters:
+  appnexus:
+    enabled: true
+  ix:
+    enabled: true
+  openx:
+    enabled: true
+  pubmatic:
+    enabled: true
+  rubicon:
+    enabled: true
+metrics:
+  prefix: prebid
+cache:
+  scheme: http
+  host: localhost
+  path: /cache
+  query: uuid=
+settings:
+  enforce-valid-account: false
+  generate-storedrequest-bidrequest-id: true
+  filesystem:
+    settings-filename: production/configs/app-settings.yaml
+    stored-requests-dir: production/stored-requests
+    stored-imps-dir: production/stored-imps
+    profiles-dir: production/profiles
+    stored-responses-dir: production/stored-responses
+    categories-dir:
+gdpr:
+  default-value: 1
+  vendorlist:
+    v2:
+      cache-dir: /var/tmp/vendor2
+    v3:
+      cache-dir: /var/tmp/vendor3
+admin-endpoints:
+  logging-changelevel:
+    enabled: true
+    path: /logging/changelevel
+    on-application-port: true
+    protected: false
+analytics:
+  gcp-monitoring:
+    enabled: true
+    project-id: "halo-ads"  # Replace with your actual GCP project ID
+    metric-prefix: "custom.googleapis.com/prebid/"  # Optional: defaults to this value

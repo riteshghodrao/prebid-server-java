@@ -58,6 +58,7 @@
         <json-logic.version>1.0.9</json-logic.version>
         <aws.awssdk.version>2.31.22</aws.awssdk.version>
         <dropwizard-metrics.version>4.2.30</dropwizard-metrics.version>
+        <google-cloud-monitoring.version>3.30.0</google-cloud-monitoring.version>
 
         <!-- Project test dependency versions -->
         <wiremock.version>3.12.1</wiremock.version>
@@ -261,6 +262,11 @@
                 <groupId>io.github.jamsesso</groupId>
                 <artifactId>json-logic-java</artifactId>
                 <version>${json-logic.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>google-cloud-monitoring</artifactId>
+                <version>${google-cloud-monitoring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mock-server</groupId>

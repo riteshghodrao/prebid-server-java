@@ -10,6 +10,8 @@ import org.prebid.server.analytics.AnalyticsReporter;
 import org.prebid.server.analytics.reporter.AnalyticsReporterDelegator;
 import org.prebid.server.analytics.reporter.agma.AgmaAnalyticsReporter;
 import org.prebid.server.analytics.reporter.agma.model.AgmaAnalyticsProperties;
+import org.prebid.server.analytics.reporter.gcpmonitoring.GcpMonitoringAnalyticsReporter;
+import org.prebid.server.analytics.reporter.gcpmonitoring.model.GcpMonitoringAnalyticsProperties;
 import org.prebid.server.analytics.reporter.greenbids.GreenbidsAnalyticsReporter;
 import org.prebid.server.analytics.reporter.greenbids.model.GreenbidsAnalyticsProperties;
 import org.prebid.server.analytics.reporter.liveintent.LiveIntentAnalyticsReporter;
@@ -343,6 +345,52 @@ public class AnalyticsConfiguration {
                         .partnerId(this.partnerId)
                         .analyticsEndpoint(this.analyticsEndpoint)
                         .timeoutMs(this.timeoutMs)
+                        .build();
+            }
+        }
+    }
+
+    @Configuration
+    @ConditionalOnProperty(prefix = "analytics.gcp-monitoring", name = "enabled", havingValue = "true")
+    public static class GcpMonitoringAnalyticsConfiguration {
+
+        @Bean
+        GcpMonitoringAnalyticsReporter gcpMonitoringAnalyticsReporter(
+                GcpMonitoringAnalyticsConfigurationProperties properties,
+                HttpClient httpClient,
+                JacksonMapper jacksonMapper,
+                Vertx vertx) {
+
+            return new GcpMonitoringAnalyticsReporter(
+                    properties.toComponentProperties(),
+                    httpClient,
+                    jacksonMapper,
+                    vertx);
+        }
+
+        @Bean
+        @ConfigurationProperties(prefix = "analytics.gcp-monitoring")
+        GcpMonitoringAnalyticsConfigurationProperties gcpMonitoringAnalyticsConfigurationProperties() {
+            return new GcpMonitoringAnalyticsConfigurationProperties();
+        }
+
+        @Validated
+        @NoArgsConstructor
+        @Data
+        private static class GcpMonitoringAnalyticsConfigurationProperties {
+
+            @NotNull
+            private String projectId;
+
+            private Boolean enabled;
+
+            private String metricPrefix;
+
+            public GcpMonitoringAnalyticsProperties toComponentProperties() {
+                return GcpMonitoringAnalyticsProperties.builder()
+                        .projectId(getProjectId())
+                        .enabled(getEnabled())
+                        .metricPrefix(getMetricPrefix())
                         .build();
             }
         }

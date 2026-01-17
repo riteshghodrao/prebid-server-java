@@ -1,0 +1,76 @@
+{
+  "id": "main-banner-request",
+  "imp": [
+    {
+      "id": "imp1",
+      "ext": {
+        "prebid": {
+          "storedimp": {
+            "id": "banner_320x50"
+          }
+        }
+      }
+    },
+    {
+      "id": "imp2",
+      "ext": {
+        "prebid": {
+          "storedimp": {
+            "id": "banner_300x250"
+          }
+        }
+      }
+    },
+    {
+      "id": "imp3",
+      "ext": {
+        "prebid": {
+          "storedimp": {
+            "id": "banner_160x600"
+          }
+        }
+      }
+    },
+    {
+      "id": "imp4",
+      "ext": {
+        "prebid": {
+          "storedimp": {
+            "id": "banner_300x600"
+          }
+        }
+      }
+    }
+  ],
+  "site": {
+    "publisher": {
+      "id": "1001"
+    }
+  },
+  "at": 1,
+  "tmax": 5000,
+  "cur": [
+    "USD"
+  ],
+  "ext": {
+    "prebid": {
+      "targeting": {
+        "pricegranularity": {
+          "precision": 2,
+          "ranges": [
+            {
+              "max": 20,
+              "increment": 0.1
+            }
+          ]
+        }
+      },
+      "cache": {
+        "bids": {},
+        "vastxml": {
+          "ttlseconds": 120
+        }
+      }
+    }
+  }
+}
