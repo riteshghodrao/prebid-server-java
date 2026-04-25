@@ -47,6 +47,7 @@ public interface BidResponsePostProcessor {
                                                BidRequest bidRequest,
                                                BidResponse bidResponse,
                                                Account account) {
+
             return Future.succeededFuture(bidResponse);
         }
     }

@@ -94,7 +94,6 @@ import org.prebid.server.floors.PriceFloorEnforcer;
 import org.prebid.server.floors.PriceFloorProcessor;
 import org.prebid.server.floors.PriceFloorsConfigResolver;
 import org.prebid.server.geolocation.CountryCodeMapper;
-import org.prebid.server.handler.InMobiResponseHandler;
 import org.prebid.server.hooks.execution.HookStageExecutor;
 import org.prebid.server.identity.IdGenerator;
 import org.prebid.server.identity.NoneIdGenerator;
@@ -1194,14 +1193,9 @@ public class ServiceConfiguration {
         return new TimeoutFactory(clock);
     }
 
-//    @Bean
-//    BidResponsePostProcessor bidResponsePostProcessor() {
-//        return BidResponsePostProcessor.noOp();
-//    }
-
     @Bean
     BidResponsePostProcessor bidResponsePostProcessor() {
-        return new InMobiResponseHandler();
+        return BidResponsePostProcessor.noOp();
     }
 
     @Bean

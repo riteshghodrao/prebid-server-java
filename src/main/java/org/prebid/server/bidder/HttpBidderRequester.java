@@ -100,7 +100,7 @@ public class HttpBidderRequester {
 
         final String bidderName = bidderRequest.getBidder();
         final BidRequest bidRequest = bidderRequest.getBidRequest();
-        System.out.println("InMobi " + bidRequest);
+
         final Result<List<HttpRequest<T>>> httpRequestsWithErrors = bidder.makeHttpRequests(bidRequest);
         final List<BidderError> errors = httpRequestsWithErrors.getErrors();
         final List<HttpRequest<T>> httpRequests = enrichRequests(

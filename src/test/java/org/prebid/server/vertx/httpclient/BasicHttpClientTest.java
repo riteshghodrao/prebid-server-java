@@ -25,8 +25,8 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -159,6 +159,26 @@ public class BasicHttpClientTest {
             assertThat(e)
                     .isInstanceOf(TimeoutException.class)
                     .hasMessageStartingWith("Timeout period of 1000ms has been exceeded");
+            context.completeNow();
+        }));
+    }
+
+    @Test
+    public void requestShouldFailIfHttpResponseTimedOut(Vertx vertx, VertxTestContext context) {
+        // given
+        final BasicHttpClient httpClient = new BasicHttpClient(vertx, vertx.createHttpClient());
+        final int serverPort = 8888;
+
+        startServer(serverPort, 0L, 2000L);
+
+        // when
+        final Future<?> future = httpClient.get("http://localhost:" + serverPort, 1000L);
+
+        // then
+        future.onComplete(context.failing(e -> {
+            assertThat(e)
+                    .isInstanceOf(TimeoutException.class)
+                    .hasMessage("Timeout period of 1000ms has been exceeded");
             context.completeNow();
         }));
     }

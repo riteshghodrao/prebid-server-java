@@ -3,11 +3,6 @@ accounts:
     status: active
     auction:
       price-granularity: low
-      debug-allow: false
-      "banner-cache-ttl": 1
-      "video-cache-ttl": 1
-    settings:
-      geo-lookup: true
     privacy:
       ccpa:
         enabled: true

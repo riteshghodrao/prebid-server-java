@@ -292,6 +292,7 @@ public class Ortb2RequestFactory {
                 .orElseGet(Device::builder)
                 .geo(updatedGeo)
                 .build();
+
         return Future.succeededFuture(bidRequest.toBuilder().device(updatedDevice).build());
     }
 

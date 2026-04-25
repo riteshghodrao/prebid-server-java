@@ -70,14 +70,6 @@ mvn clean package
 ```bash
 mvn clean package --file extra/pom.xml
 ```
-
-Actually run following:
-```bash
-mvn clean package -Dcheckstyle.skip -Dmaven.test.skip
-
-java -jar target/prebid-server.jar --spring.config.additional-location=sample/configs/prebid-config.yaml
-```
-
 For more information how to build the server follow [documentation](docs/build.md).
 
 ## Configuration

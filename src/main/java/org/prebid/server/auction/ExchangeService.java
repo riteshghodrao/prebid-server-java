@@ -247,7 +247,18 @@ public class ExchangeService {
         final BidderAliases aliases = aliases(bidRequest, account);
         final BidRequestCacheInfo cacheInfo = bidRequestCacheInfo(bidRequest, account);
         final Map<String, MultiBidConfig> bidderToMultiBid = bidderToMultiBids(bidRequest, debugWarnings);
-        receivedContext.getBidRejectionTrackers().putAll(makeBidRejectionTrackers(bidRequest, aliases));
+
+        populateBidRejectionTrackers(receivedContext, aliases);
+
+        final boolean debugEnabled = receivedContext.getDebugContext().isDebugEnabled();
+        metrics.updateDebugRequestMetrics(debugEnabled);
+        metrics.updateAccountDebugRequestMetrics(account, debugEnabled);
+
+        logger.debug("runAuction: requestId={}, impCount={}, debug={}",
+                bidRequest.getId(),
+                bidRequest.getImp() != null ? bidRequest.getImp().size() : 0,
+                debugEnabled);
+
         return storedResponseProcessor.getStoredResponseResult(bidRequest.getImp(), timeout)
                 .map(storedResponseResult -> populateStoredResponse(storedResponseResult, storedAuctionResponses))
                 .compose(storedResponseResult ->
@@ -255,6 +266,14 @@ public class ExchangeService {
                                 .map(receivedContext::with))
 
                 .map(context -> updateRequestMetric(context, uidsCookie, aliases, account, requestTypeMetric))
+                .map(context -> {
+                    logger.debug("Dispatching to {} bidders: {}",
+                            context.getAuctionParticipations().size(),
+                            context.getAuctionParticipations().stream()
+                                    .map(ap -> ap.getBidderRequest().getBidder())
+                                    .toList());
+                    return context;
+                })
                 .compose(context -> Future.join(
                                 context.getAuctionParticipations().stream()
                                         .map(auctionParticipation -> processAndRequestBids(
@@ -273,9 +292,19 @@ public class ExchangeService {
                                 bidRequest.getImp(),
                                 context.getBidRejectionTrackers()))
                         .map(auctionParticipations -> dropZeroNonDealBids(
-                                auctionParticipations, debugWarnings, context.getDebugContext().isDebugEnabled()))
+                                auctionParticipations, debugWarnings, debugEnabled))
                         .map(auctionParticipations ->
                                 bidsAdjuster.validateAndAdjustBids(auctionParticipations, context, aliases))
+                        .map(auctionParticipations -> {
+                            for (AuctionParticipation ap : auctionParticipations) {
+                                final var seatBid = ap.getBidderResponse().getSeatBid();
+                                logger.debug("Post-adjust {}: bids={}, errors={}",
+                                        ap.getBidder(),
+                                        seatBid.getBids().size(),
+                                        seatBid.getErrors());
+                            }
+                            return auctionParticipations;
+                        })
                         .map(auctionParticipations -> updateResponsesMetrics(auctionParticipations, account, aliases))
                         .map(context::with))
                 // produce response from bidder results
@@ -284,7 +313,7 @@ public class ExchangeService {
                                 logger,
                                 bidResponse,
                                 context.getBidRequest(),
-                                context.getDebugContext().isDebugEnabled()))
+                                debugEnabled))
                         .compose(bidResponse -> bidResponsePostProcessor.postProcess(
                                 context.getHttpRequest(), uidsCookie, bidRequest, bidResponse, account))
                         .map(context::with));
@@ -419,7 +448,29 @@ public class ExchangeService {
         return MultiBidConfig.of(bidder, bidLimit, codePrefix);
     }
 
-    private Map<String, BidRejectionTracker> makeBidRejectionTrackers(BidRequest bidRequest, BidderAliases aliases) {
+    private void populateBidRejectionTrackers(AuctionContext auctionContext, BidderAliases aliases) {
+        final Map<String, BidRejectionTracker> bidRejectionTrackers = auctionContext.getBidRejectionTrackers();
+        removeInvalidBidRejectionTrackers(bidRejectionTrackers, aliases);
+        makeBidRejectionTrackers(bidRejectionTrackers, auctionContext.getBidRequest(), aliases);
+    }
+
+    private void removeInvalidBidRejectionTrackers(Map<String, BidRejectionTracker> bidRejectionTrackers,
+                                                   BidderAliases aliases) {
+
+        final Set<String> bidderNames = new HashSet<>(bidRejectionTrackers.keySet());
+        for (String bidder: bidderNames) {
+            if (!isValidBidder(bidder, aliases)) {
+                bidRejectionTrackers.remove(bidder);
+                logger.warn("Pre-rejected impressions of the bidder {} have been removed. "
+                        + "Reason: the bidder is invalid");
+            }
+        }
+    }
+
+    private void makeBidRejectionTrackers(Map<String, BidRejectionTracker> bidRejectionTrackers,
+                                          BidRequest bidRequest,
+                                          BidderAliases aliases) {
+
         final Map<String, Set<String>> impIdToBidders = bidRequest.getImp().stream()
                 .filter(Objects::nonNull)
                 .filter(imp -> StringUtils.isNotEmpty(imp.getId()))
@@ -433,9 +484,13 @@ public class ExchangeService {
                     bidderToImpIds.computeIfAbsent(bidder, bidderName -> new HashSet<>()).add(impId));
         }
 
-        return bidderToImpIds.entrySet().stream().collect(Collectors.toMap(
-                Map.Entry::getKey,
-                entry -> new BidRejectionTracker(entry.getKey(), entry.getValue(), logSamplingRate)));
+        bidderToImpIds.forEach((bidder, impIds) -> {
+            if (bidRejectionTrackers.containsKey(bidder)) {
+                bidRejectionTrackers.put(bidder, new BidRejectionTracker(bidRejectionTrackers.get(bidder), impIds));
+            } else {
+                bidRejectionTrackers.put(bidder, new BidRejectionTracker(bidder, impIds, logSamplingRate));
+            }
+        });
     }
 
     private static StoredResponseResult populateStoredResponse(StoredResponseResult storedResponseResult,
@@ -450,9 +505,22 @@ public class ExchangeService {
             BidderAliases aliases,
             Map<String, MultiBidConfig> bidderToMultiBid) {
 
-        final List<Imp> imps = storedResponseResult.getRequiredRequestImps().stream()
+        final List<Imp> allImps = storedResponseResult.getRequiredRequestImps();
+        for (Imp imp : allImps) {
+            final ObjectNode ext = imp.getExt();
+            logger.debug("extractBidders: impId={}, ext null={}, ext={}",
+                    imp.getId(), ext == null, ext);
+            if (ext != null) {
+                final JsonNode prebid = ext.get(PREBID_EXT);
+                logger.debug("extractBidders: impId={}, prebid null={}, prebid={}",
+                        imp.getId(), prebid == null, prebid);
+            }
+        }
+        final List<Imp> imps = allImps.stream()
                 .filter(imp -> bidderParamsFromImpExt(imp.getExt()) != null)
                 .toList();
+        logger.debug("extractBidders: {} of {} imps have bidder params",
+                imps.size(), allImps.size());
         // identify valid bidders and aliases out of imps
         final List<String> bidders = imps.stream()
                 .map(imp -> bidderNamesFromImpExt(imp, aliases))
@@ -460,6 +528,7 @@ public class ExchangeService {
                 .filter(bidder -> isBidderCallActivityAllowed(bidder, context))
                 .distinct()
                 .toList();
+        logger.debug("bidders : {}", bidders);
         final Map<String, Map<String, String>> impBidderToStoredBidResponse =
                 storedResponseResult.getImpBidderToStoredBidResponse();
         return makeAuctionParticipation(
@@ -716,15 +785,15 @@ public class ExchangeService {
             BidderAliases bidderAliases,
             AuctionContext context) {
 
-//        final boolean blockedRequestByTcf = bidderPrivacyResult.isBlockedRequestByTcf();
-        final boolean blockedRequestByTcf = false;
+        final boolean blockedRequestByTcf = bidderPrivacyResult.isBlockedRequestByTcf();
         final boolean blockedAnalyticsByTcf = bidderPrivacyResult.isBlockedAnalyticsByTcf();
         final String bidder = bidderPrivacyResult.getRequestBidder();
-
+        logger.debug("createAuctionParticipation - blockedRequestByTcf: {}, blockedAnalyticsByTcf: {}",
+                blockedAnalyticsByTcf, blockedAnalyticsByTcf);
         if (blockedRequestByTcf) {
             context.getBidRejectionTrackers()
                     .get(bidder)
-                    .rejectAllImps(BidRejectionReason.REQUEST_BLOCKED_PRIVACY);
+                    .rejectAll(BidRejectionReason.REQUEST_BLOCKED_PRIVACY);
 
             return AuctionParticipation.builder()
                     .bidder(bidder)
@@ -1175,7 +1244,7 @@ public class ExchangeService {
 
         auctionContext.getBidRejectionTrackers()
                 .get(bidderName)
-                .rejectAllImps(bidRejectionReason);
+                .rejectAll(bidRejectionReason);
         final BidderSeatBid bidderSeatBid = BidderSeatBid.builder()
                 .warnings(warnings)
                 .build();
@@ -1214,7 +1283,7 @@ public class ExchangeService {
         if (hookStageResult.isShouldReject()) {
             auctionContext.getBidRejectionTrackers()
                     .get(bidderRequest.getBidder())
-                    .rejectAllImps(BidRejectionReason.REQUEST_BLOCKED_GENERAL);
+                    .rejectAll(BidRejectionReason.REQUEST_BLOCKED_GENERAL);
 
             return Future.succeededFuture(BidderResponse.of(bidderRequest.getBidder(), BidderSeatBid.empty(), 0));
         }
@@ -1245,6 +1314,10 @@ public class ExchangeService {
         final long auctionStartTime = timeoutContext.getStartTime();
         final int adjustmentFactor = timeoutContext.getAdjustmentFactor();
         final long bidderRequestStartTime = clock.millis();
+
+        logger.debug("Requesting bids: bidder={}, impCount={}",
+                bidderName, bidderRequest.getBidRequest().getImp().size());
+
         return Future.succeededFuture(bidderRequest.getBidRequest())
                 .map(bidRequest -> adjustTmax(
                         bidRequest, auctionStartTime, adjustmentFactor, bidderRequestStartTime, bidderTmaxDeductionMs))
@@ -1260,7 +1333,13 @@ public class ExchangeService {
                         aliases,
                         debugResolver.resolveDebugForBidder(auctionContext, resolvedBidderName)))
                 .map(seatBid -> populateBidderCode(seatBid, bidderName, resolvedBidderName))
-                .map(seatBid -> BidderResponse.of(bidderName, seatBid, responseTime(bidderRequestStartTime)));
+                .map(seatBid -> {
+                    logger.debug("Bidder {} responded: bids={}, errors={}, responseTimeMs={}",
+                            bidderName, seatBid.getBids().size(),
+                            seatBid.getErrors().size(),
+                            responseTime(bidderRequestStartTime));
+                    return BidderResponse.of(bidderName, seatBid, responseTime(bidderRequestStartTime));
+                });
     }
 
     private BidderSeatBid populateBidderCode(BidderSeatBid seatBid, String bidderName, String resolvedBidderName) {
