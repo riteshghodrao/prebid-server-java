@@ -2,6 +2,7 @@ package org.prebid.server.handler.openrtb2;
 
 import com.iab.openrtb.request.BidRequest;
 import com.iab.openrtb.request.Imp;
+import com.iab.openrtb.response.BidResponse;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AsyncResult;
@@ -101,11 +102,11 @@ public class AuctionHandler implements ApplicationResource {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        // Prebid Server interprets request.tmax to be the maximum amount of time that a caller is willing to wait
-        // for bids. However, tmax may be defined in the Stored Request data.
-        // If so, then the trip to the backend might use a significant amount of this time. We can respect timeouts
-        // more accurately if we note the real start time, and use it to compute the auction timeout.
         final long startTime = clock.millis();
+        logger.debug("Auction request received: method={}, path={}, origin={}",
+                routingContext.request().method(),
+                routingContext.request().path(),
+                routingContext.request().getHeader("Origin"));
 
         final AuctionEvent.AuctionEventBuilder auctionEventBuilder = AuctionEvent.builder()
                 .httpContext(HttpRequestContext.from(routingContext));
@@ -166,8 +167,17 @@ public class AuctionHandler implements ApplicationResource {
         final MultiMap responseHeaders = getCommonResponseHeaders(routingContext)
                 .add(HttpUtil.CONTENT_TYPE_HEADER, HttpHeaderValues.APPLICATION_JSON);
 
+        final String responseBody = mapper.encodeToString(auctionContext.getBidResponse());
+        final BidResponse bidResponse = auctionContext.getBidResponse();
+        logger.debug("Final response: seatbidCount={}, totalBids={}",
+                bidResponse.getSeatbid() != null ? bidResponse.getSeatbid().size() : 0,
+                bidResponse.getSeatbid() != null
+                        ? bidResponse.getSeatbid().stream()
+                            .mapToInt(sb -> sb.getBid() != null ? sb.getBid().size() : 0).sum()
+                        : 0);
+
         return RawResponseContext.builder()
-                .responseBody(mapper.encodeToString(auctionContext.getBidResponse()))
+                .responseBody(responseBody)
                 .responseHeaders(responseHeaders)
                 .auctionContext(auctionContext)
                 .build();
@@ -182,20 +192,26 @@ public class AuctionHandler implements ApplicationResource {
                     .map(rawResponseContext);
         }
 
+        final String originalBody = rawResponseContext.getResponseBody();
         return hookStageExecutor.executeExitpointStage(
                         rawResponseContext.getResponseHeaders(),
-                        rawResponseContext.getResponseBody(),
+                        originalBody,
                         auctionContext)
                 .map(HookStageExecutionResult::getPayload)
                 .compose(payload -> Future.succeededFuture(auctionContext)
                         .map(AnalyticsTagsEnricher::enrichWithAnalyticsTags)
                         .map(HookDebugInfoEnricher::enrichWithHooksDebugInfo)
                         .map(hooksMetricsService::updateHooksMetrics)
-                        .map(context -> RawResponseContext.builder()
-                                .auctionContext(context)
-                                .responseHeaders(payload.responseHeaders())
-                                .responseBody(payload.responseBody())
-                                .build()));
+                        .map(context -> {
+                            final String body = payload.responseBody();
+                            final String effectiveBody = (body != null && !body.isBlank())
+                                    ? body : originalBody;
+                            return RawResponseContext.builder()
+                                    .auctionContext(context)
+                                    .responseHeaders(payload.responseHeaders())
+                                    .responseBody(effectiveBody)
+                                    .build();
+                        }));
     }
 
     private void handleResult(AsyncResult<RawResponseContext> responseResult,
@@ -214,6 +230,7 @@ public class AuctionHandler implements ApplicationResource {
                 ? auctionContext.getRequestTypeMetric()
                 : MetricName.openrtb2web;
 
+        logger.debug("isAuctionSkipped: {}, responseSucceeded: {}", isAuctionSkipped, responseSucceeded);
         final MetricName metricRequestStatus;
         final List<String> errorMessages;
         final HttpResponseStatus status;
@@ -223,6 +240,7 @@ public class AuctionHandler implements ApplicationResource {
         final MultiMap responseHeaders = response.headers();
 
         if (responseSucceeded) {
+            logger.debug("responseSucceeded");
             metricRequestStatus = MetricName.ok;
             errorMessages = Collections.emptyList();
             status = HttpResponseStatus.OK;
@@ -231,6 +249,10 @@ public class AuctionHandler implements ApplicationResource {
                     .forEach(header -> HttpUtil.addHeaderIfValueIsNotEmpty(
                             responseHeaders, header.getKey(), header.getValue()));
             body = rawResponseContext.getResponseBody();
+            final int bodyLen = body != null ? body.length() : 0;
+            logger.debug("Body to send: length={}, preview={}",
+                    bodyLen, body != null && bodyLen > 0 ? body.substring(0, Math.min(150, bodyLen))
+                            + "..." : "null/empty");
         } else {
             getCommonResponseHeaders(routingContext)
                     .forEach(header -> HttpUtil.addHeaderIfValueIsNotEmpty(
@@ -289,12 +311,16 @@ public class AuctionHandler implements ApplicationResource {
             }
         }
 
+        logger.debug("Auction response: status={}, elapsedMs={}, errors={}",
+                status.code(), clock.millis() - startTime, errorMessages);
+
         final AuctionEvent auctionEvent = auctionEventBuilder.status(status.code()).errors(errorMessages).build();
         final PrivacyContext privacyContext = auctionContext != null ? auctionContext.getPrivacyContext() : null;
         final TcfContext tcfContext = privacyContext != null ? privacyContext.getTcfContext() : TcfContext.empty();
 
         final boolean responseSent = respondWith(routingContext, status, body, requestType);
 
+        logger.debug("responseSent: {}", responseSent);
         if (responseSent) {
             metrics.updateRequestTimeMetric(MetricName.request_time, clock.millis() - startTime);
             metrics.updateRequestTypeMetric(requestType, metricRequestStatus);
@@ -312,15 +338,19 @@ public class AuctionHandler implements ApplicationResource {
                                 HttpResponseStatus status,
                                 String body,
                                 MetricName requestType) {
-
-        return HttpUtil.executeSafely(
+        final int len = body != null ? body.length() : 0;
+        logger.debug("respondWith: bodyLength={}, responseClosed={}", len, routingContext.response().closed());
+        final boolean sent = HttpUtil.executeSafely(
                 routingContext,
                 Endpoint.openrtb2_auction,
                 response -> response
                         .exceptionHandler(throwable -> handleResponseException(throwable, requestType))
                         .setStatusCode(status.code())
                         .end(body));
-
+        if (!sent) {
+            logger.warn("respondWith: executeSafely returned false (connection closed or exception)");
+        }
+        return sent;
     }
 
     private void handleResponseException(Throwable throwable, MetricName requestType) {

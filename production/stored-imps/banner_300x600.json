@@ -26,12 +26,9 @@
           "zoneId": 535510
         }
       },
-      "storedbidresponse": [
-        {
-          "bidder": "appnexus",
-          "id": "response_300x600"
-        }
-      ]
+      "storedauctionresponse": {
+        "id": "response_300x600"
+      }
     }
   }
 }

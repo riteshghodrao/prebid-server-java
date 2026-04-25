@@ -20,8 +20,6 @@ public class BasicEnforcePurposeStrategy extends EnforcePurposeStrategy {
                                                           Collection<VendorPermissionWithGvl> excludedVendors,
                                                           boolean isEnforceVendors) {
 
-        logger.debug("Basic strategy used for purpose {}", purpose);
-
         final Stream<VendorPermission> allowedVendorPermissions = toVendorPermissions(vendorsForPurpose)
                 .filter(vendorPermission -> vendorPermission.getVendorId() != null)
                 .filter(vendorPermission -> isAllowedBySimpleConsent(

@@ -52,6 +52,7 @@ import org.prebid.server.cache.model.CacheServiceResult;
 import org.prebid.server.cache.model.CacheTtl;
 import org.prebid.server.cache.model.DebugHttpCall;
 import org.prebid.server.events.EventsContext;
+import org.prebid.server.events.EventsUrlEnhancer;
 import org.prebid.server.events.EventsService;
 import org.prebid.server.exception.InvalidRequestException;
 import org.prebid.server.exception.PreBidException;
@@ -311,7 +312,8 @@ public class BidResponseCreator {
                         videoStoredDataResult,
                         eventsContext,
                         generatedBidId,
-                        effectiveBidId))
+                        effectiveBidId,
+                        auctionContext.getBidRequest().getImp()))
                 .build();
     }
 
@@ -350,7 +352,8 @@ public class BidResponseCreator {
                                     VideoStoredDataResult videoStoredDataResult,
                                     EventsContext eventsContext,
                                     String generatedBidId,
-                                    String effectiveBidId) {
+                                    String effectiveBidId,
+                                    List<Imp> imps) {
 
         final ExtBidPrebid updatedExtBidPrebid = updateBidExtPrebid(
                 bid,
@@ -360,7 +363,8 @@ public class BidResponseCreator {
                 videoStoredDataResult,
                 eventsContext,
                 generatedBidId,
-                effectiveBidId);
+                effectiveBidId,
+                imps);
         final ObjectNode existingBidExt = bid.getExt();
         final ObjectNode updatedBidExt = mapper.mapper().createObjectNode();
 
@@ -379,10 +383,16 @@ public class BidResponseCreator {
                                             VideoStoredDataResult videoStoredDataResult,
                                             EventsContext eventsContext,
                                             String generatedBidId,
-                                            String effectiveBidId) {
+                                            String effectiveBidId,
+                                            List<Imp> imps) {
 
         final Video storedVideo = videoStoredDataResult.getImpIdToStoredVideo().get(bid.getImpid());
-        final Events events = createEvents(bidder, account, effectiveBidId, eventsContext);
+        final Events baseEvents = createEvents(bidder, account, effectiveBidId, eventsContext);
+        final Events computedEvents = EventsUrlEnhancer.enhance(baseEvents, bid, bidType, imps);
+        final Events existingEvents = getExtPrebid(bid.getExt(), ExtBidPrebid.class)
+                .map(ExtBidPrebid::getEvents)
+                .orElse(null);
+        final Events events = computedEvents != null ? computedEvents : existingEvents;
         final ExtBidPrebidVideo extBidPrebidVideo = getExtBidPrebidVideo(bid.getExt()).orElse(null);
         final ExtBidPrebid.ExtBidPrebidBuilder extBidPrebidBuilder = getExtPrebid(bid.getExt(), ExtBidPrebid.class)
                 .map(ExtBidPrebid::toBuilder)
@@ -622,7 +632,9 @@ public class BidResponseCreator {
                                                            EventsContext eventsContext) {
 
         final BidRequest bidRequest = auctionContext.getBidRequest();
-        if (isEmptyBidderResponses(bidderResponses)) {
+        final boolean empty = isEmptyBidderResponses(bidderResponses);
+
+        if (empty) {
 
             final ExtBidResponse extBidResponse = toExtBidResponse(
                     bidderResponses,
@@ -1097,9 +1109,6 @@ public class BidResponseCreator {
                 .collect(Collectors.toMap(Function.identity(), ignored -> CacheInfo.empty()));
     }
 
-    /**
-     * Adds bids with no cache id info.
-     */
     private static CacheServiceResult addNotCachedBids(CacheServiceResult cacheResult, Set<BidInfo> bidInfos) {
         final Map<Bid, CacheInfo> bidToCacheId = cacheResult.getCacheBids();
 
@@ -1185,9 +1194,6 @@ public class BidResponseCreator {
         return errors.isEmpty() ? null : errors;
     }
 
-    /**
-     * Returns a map with bidder name as a key and list of {@link ExtBidderError}s as a value.
-     */
     private static Map<String, List<ExtBidderError>> extractBidderErrors(
             Collection<BidderResponseInfo> bidderResponses) {
 
@@ -1199,9 +1205,6 @@ public class BidResponseCreator {
                         ListUtil::union));
     }
 
-    /**
-     * Returns a map with bidder name as a key and list of {@link ExtBidderError}s as a value.
-     */
     private static Map<String, List<ExtBidderError>> extractBidderWarnings(
             Collection<BidderResponseInfo> bidderResponses) {
 

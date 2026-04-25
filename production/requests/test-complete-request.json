@@ -1,0 +1,56 @@
+{
+  "id": "test-request-4",
+  "ext": {
+    "prebid": {
+      "storedrequest": {
+        "id": "main-banner-request"
+      },
+      "targeting": {
+        "pricegranularity": {
+          "precision": 2,
+          "ranges": [
+            {
+              "max": 20,
+              "increment": 0.1
+            }
+          ]
+        }
+      },
+      "cache": {
+        "bids": {}
+      }
+    }
+  },
+  "site": {
+    "domain": "example.com",
+    "page": "https://example.com/article",
+    "publisher": {
+      "id": "1001",
+      "name": "Example Publisher"
+    },
+    "ref": "https://google.com"
+  },
+  "device": {
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "ip": "192.168.1.1",
+    "geo": {
+      "country": "US",
+      "region": "CA",
+      "city": "San Francisco"
+    }
+  },
+  "user": {
+    "id": "user123",
+    "buyeruid": "buyer-uid-123"
+  },
+  "regs": {
+    "ext": {
+      "gdpr": 0,
+      "us_privacy": "1YNN"
+    }
+  },
+  "at": 1,
+  "tmax": 5000,
+  "cur": ["USD"]
+}
+

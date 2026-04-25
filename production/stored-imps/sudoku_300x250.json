@@ -12,8 +12,10 @@
   },
   "ext": {
     "prebid": {
-      "storedauctionresponse": {
-        "id": "response_300x250"
+      "bidder": {
+        "inmobi": {
+          "plc": "10000626849"
+        }
       }
     }
   }

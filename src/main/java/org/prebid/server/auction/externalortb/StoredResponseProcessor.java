@@ -29,6 +29,8 @@ import org.prebid.server.proto.openrtb.ext.request.ExtStoredAuctionResponse;
 import org.prebid.server.proto.openrtb.ext.request.ExtStoredBidResponse;
 import org.prebid.server.proto.openrtb.ext.response.BidType;
 import org.prebid.server.proto.openrtb.ext.response.ExtBidPrebid;
+import org.prebid.server.log.Logger;
+import org.prebid.server.log.LoggerFactory;
 import org.prebid.server.settings.ApplicationSettings;
 import org.prebid.server.settings.model.StoredResponseDataResult;
 
@@ -49,6 +51,8 @@ import java.util.stream.Collectors;
  */
 public class StoredResponseProcessor {
 
+    private static final Logger logger = LoggerFactory.getLogger(StoredResponseProcessor.class);
+
     private static final String PREBID_EXT = "prebid";
     private static final String DEFAULT_BID_CURRENCY = "USD";
     private static final String PBS_IMPID_MACRO = "##PBSIMPID##";
@@ -68,9 +72,16 @@ public class StoredResponseProcessor {
     }
 
     public Future<StoredResponseResult> getStoredResponseResult(List<Imp> imps, Timeout timeout) {
+        logger.debug("getStoredResponseResult: impCount={}, impIds={}",
+                imps.size(), imps.stream().map(Imp::getId).toList());
+
         final Map<String, ExtImpPrebid> impExtPrebids = getImpsExtPrebid(imps);
         final Map<String, StoredResponse> impIdsToStoredResponses = getAuctionStoredResponses(impExtPrebids);
         final List<Imp> requiredRequestImps = excludeStoredAuctionResponseImps(imps, impIdsToStoredResponses);
+
+        logger.debug("Stored auction responses for impIds={}, requiredRequestImps={}",
+                impIdsToStoredResponses.keySet(),
+                requiredRequestImps.stream().map(Imp::getId).toList());
 
         final Map<String, Map<String, StoredResponse.StoredResponseId>> impToBidderToStoredBidResponseId =
                 getStoredBidResponses(impExtPrebids, requiredRequestImps);
@@ -81,10 +92,12 @@ public class StoredResponseProcessor {
                 .forEach(bidderToStoredResponse -> storedResponses.addAll(bidderToStoredResponse.values()));
 
         if (storedResponses.isEmpty()) {
+            logger.debug("No stored responses to fetch");
             return Future.succeededFuture(
                     StoredResponseResult.of(imps, Collections.emptyList(), Collections.emptyMap()));
         }
 
+        logger.debug("Fetching {} stored response(s)", storedResponses.size());
         return getStoredResponses(storedResponses, timeout)
                 .recover(exception -> Future.failedFuture(new InvalidRequestException(
                         "Stored response fetching failed with reason: " + exception.getMessage())))

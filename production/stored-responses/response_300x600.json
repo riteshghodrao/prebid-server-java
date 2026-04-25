@@ -1,6 +1,4 @@
-{
-  "id": "response_300x600",
-  "seatbid": [
+[
     {
       "bid": [
         {
@@ -21,6 +19,9 @@
               "meta": {
                 "adaptercode": "appnexus"
               },
+              "events": {
+                "imp": "https://ads.haloads.io/event?t=imp&b=bid-300x600-1&a=1001&bidder=appnexus&tag=banner_300x600&size=300x600&p=2.00&mtype=banner&f=b&x=1"
+              },
               "targeting": {
                 "hb_bidder": "appnexus",
                 "hb_pb": "2.00",
@@ -33,6 +34,4 @@
       ],
       "seat": "appnexus"
     }
-  ],
-  "cur": "USD"
-}
+  ]

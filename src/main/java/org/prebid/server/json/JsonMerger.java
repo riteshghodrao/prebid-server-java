@@ -2,12 +2,17 @@ package org.prebid.server.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.prebid.server.exception.InvalidRequestException;
 import org.prebid.server.json.merge.JsonMergePatch;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class JsonMerger {
@@ -25,6 +30,7 @@ public class JsonMerger {
      */
     public <T> T merge(T originalObject, String storedData, String id, Class<T> classToCast) {
         final JsonNode originJsonNode = mapper.mapper().valueToTree(originalObject);
+        stripNulls(originJsonNode);
         final JsonNode storedRequestJsonNode;
         try {
             storedRequestJsonNode = mapper.mapper().readTree(storedData);
@@ -32,9 +38,8 @@ public class JsonMerger {
             throw new InvalidRequestException("Can't parse Json for stored request with id " + id);
         }
         try {
-            // Http request fields have higher priority and will override fields from stored requests
-            // in case they have different values
-            return mapper.mapper().treeToValue(JsonMergePatch.fromJson(originJsonNode).apply(storedRequestJsonNode),
+            return mapper.mapper().treeToValue(
+                    JsonMergePatch.fromJson(originJsonNode).apply(storedRequestJsonNode),
                     classToCast);
         } catch (JsonPatchException e) {
             throw new InvalidRequestException(
@@ -73,6 +78,22 @@ public class JsonMerger {
             return JsonMergePatch.fromJson(fromNode).apply(toNode);
         } catch (JsonPatchException e) {
             throw new InvalidRequestException("Couldn't create merge patch for json nodes");
+        }
+    }
+
+    private static void stripNulls(JsonNode node) {
+        if (node instanceof ObjectNode objectNode) {
+            final List<String> nullFields = new ArrayList<>();
+            final Iterator<Map.Entry<String, JsonNode>> fields = objectNode.fields();
+            while (fields.hasNext()) {
+                final Map.Entry<String, JsonNode> field = fields.next();
+                if (field.getValue().isNull()) {
+                    nullFields.add(field.getKey());
+                } else {
+                    stripNulls(field.getValue());
+                }
+            }
+            objectNode.remove(nullFields);
         }
     }
 }

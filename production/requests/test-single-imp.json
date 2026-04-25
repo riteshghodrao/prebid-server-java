@@ -1,0 +1,26 @@
+{
+  "id": "test-request-2",
+  "imp": [
+    {
+      "id": "imp1",
+      "ext": {
+        "prebid": {
+          "storedimp": {
+            "id": "banner_300x250"
+          }
+        }
+      }
+    }
+  ],
+  "site": {
+    "page": "https://example.com/page",
+    "publisher": {
+      "id": "1001"
+    }
+  },
+  "device": {
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "ip": "192.168.1.1"
+  }
+}
+

@@ -17,6 +17,8 @@ import org.prebid.server.execution.timeout.TimeoutFactory;
 import org.prebid.server.identity.IdGenerator;
 import org.prebid.server.json.JacksonMapper;
 import org.prebid.server.json.JsonMerger;
+import org.prebid.server.log.Logger;
+import org.prebid.server.log.LoggerFactory;
 import org.prebid.server.metric.Metrics;
 import org.prebid.server.proto.openrtb.ext.request.ExtImp;
 import org.prebid.server.proto.openrtb.ext.request.ExtImpPrebid;
@@ -44,6 +46,7 @@ import java.util.stream.Collectors;
  */
 public class StoredRequestProcessor {
 
+    private static final Logger logger = LoggerFactory.getLogger(StoredRequestProcessor.class);
     private static final String OVERRIDE_BID_REQUEST_ID_TEMPLATE = "{{UUID}}";
 
     private final long defaultTimeout;
@@ -86,6 +89,10 @@ public class StoredRequestProcessor {
     }
 
     private Future<AuctionStoredResult> processAuctionStoredRequest(String accountId, BidRequest bidRequest) {
+        logger.debug("Processing stored request for account={}, requestId={}, impCount={}",
+                accountId, bidRequest.getId(),
+                bidRequest.getImp() != null ? bidRequest.getImp().size() : 0);
+
         final Map<BidRequest, String> bidRequestToStoredRequestId;
         final Map<Imp, String> impToStoredRequestId;
         try {
@@ -95,18 +102,28 @@ public class StoredRequestProcessor {
             impToStoredRequestId = mapStoredRequestHolderToStoredRequestId(
                     bidRequest.getImp(), this::getStoredRequestIdFromImp);
         } catch (InvalidStoredRequestException | InvalidStoredImpException e) {
+            logger.debug("Stored request/imp ID extraction failed: {}", e.getMessage());
             return Future.failedFuture(e);
         }
 
         final Set<String> requestIds = new HashSet<>(bidRequestToStoredRequestId.values());
         final Set<String> impIds = new HashSet<>(impToStoredRequestId.values());
+        logger.debug("Resolved stored request IDs={}, stored imp IDs={}", requestIds, impIds);
+
         if (requestIds.isEmpty() && impIds.isEmpty()) {
+            logger.debug("No stored request/imp IDs found, skipping stored data fetch");
             return Future.succeededFuture(AuctionStoredResult.of(false, bidRequest));
         }
 
         final Future<StoredDataResult<String>> storedDataFuture =
                 applicationSettings.getStoredData(accountId, requestIds, impIds, timeout(bidRequest))
-                        .onSuccess(storedDataResult -> updateStoredResultMetrics(storedDataResult, requestIds, impIds));
+                        .onSuccess(storedDataResult -> {
+                            updateStoredResultMetrics(storedDataResult, requestIds, impIds);
+                            logger.debug("Stored data fetched: storedRequests={}, storedImps={}, errors={}",
+                                    storedDataResult.getStoredIdToRequest().keySet(),
+                                    storedDataResult.getStoredIdToImp().keySet(),
+                                    storedDataResult.getErrors());
+                        });
 
         return storedRequestsToBidRequest(
                 storedDataFuture, bidRequest, bidRequestToStoredRequestId.get(bidRequest), impToStoredRequestId)
@@ -295,9 +312,12 @@ public class StoredRequestProcessor {
         for (int i = 0; i < mergedImps.size(); i++) {
             final Imp imp = mergedImps.get(i);
             final String storedRequestId = impToStoredId.get(imp);
+            logger.debug("mergeImps[{}]: impId={}, storedRequestId={}, impExtBefore={}",
+                    i, imp.getId(), storedRequestId, imp.getExt());
             if (storedRequestId != null) {
                 final String storedImp = storedDataResult.getStoredIdToImp().get(storedRequestId);
                 final Imp mergedImp = jsonMerger.merge(imp, storedImp, storedRequestId, Imp.class);
+                logger.debug("mergeImps[{}]: impExtAfter={}", i, mergedImp.getExt());
                 mergedImps.set(i, mergedImp);
             }
         }
@@ -346,19 +366,41 @@ public class StoredRequestProcessor {
         final ExtRequestPrebid prebid = ObjectUtil.getIfNotNull(bidRequest.getExt(), ExtRequest::getPrebid);
         final ExtStoredRequest extStoredRequest = ObjectUtil.getIfNotNull(prebid, ExtRequestPrebid::getStoredrequest);
 
-        if (extStoredRequest == null) {
-            return null;
+        if (extStoredRequest != null) {
+            final String storedRequestId = extStoredRequest.getId();
+            if (storedRequestId == null) {
+                throw new InvalidStoredRequestException("Id is not found in storedRequest");
+            }
+            logger.debug("Stored request ID from ext.prebid.storedrequest: {}", storedRequestId);
+            return storedRequestId;
         }
 
-        final String storedRequestId = extStoredRequest.getId();
-        if (storedRequestId == null) {
-            throw new InvalidStoredRequestException("Id is not found in storedRequest");
+        final String publisherId = ObjectUtil.getIfNotNull(bidRequest.getSite(),
+                site -> ObjectUtil.getIfNotNull(site.getPublisher(),
+                        publisher -> publisher.getId()));
+        if (StringUtils.isNotBlank(publisherId)) {
+            logger.debug("Stored request ID from site.publisher.id fallback: {}", publisherId);
+            return publisherId;
         }
 
-        return storedRequestId;
+        return null;
     }
 
     private String getStoredRequestIdFromImp(Imp imp) {
+        final String storedRequestId = getStoredRequestIdFromImpExt(imp);
+        if (storedRequestId != null) {
+            logger.debug("Imp id={}: resolved stored imp ID from ext.prebid.storedrequest: {}",
+                    imp.getId(), storedRequestId);
+            return storedRequestId;
+        }
+
+        final String tagId = StringUtils.isNotBlank(imp.getTagid()) ? imp.getTagid() : null;
+        logger.debug("Imp id={}: ext.prebid.storedrequest not found, tagid fallback={}",
+                imp.getId(), tagId);
+        return tagId;
+    }
+
+    private String getStoredRequestIdFromImpExt(Imp imp) {
         if (imp.getExt() == null) {
             return null;
         }
@@ -368,7 +410,8 @@ public class StoredRequestProcessor {
             extImp = mapper.mapper().treeToValue(imp.getExt(), ExtImp.class);
         } catch (JsonProcessingException e) {
             throw new InvalidStoredImpException(
-                    "Incorrect Imp extension format for Imp with id " + imp.getId() + ": " + e.getMessage());
+                    "Incorrect Imp extension format for Imp with id "
+                            + imp.getId() + ": " + e.getMessage());
         }
 
         final ExtStoredRequest extStoredRequest = ObjectUtil.getIfNotNull(
@@ -379,7 +422,8 @@ public class StoredRequestProcessor {
 
         final String storedRequestId = extStoredRequest.getId();
         if (storedRequestId == null) {
-            throw new InvalidStoredImpException("Id is not found in storedRequest");
+            throw new InvalidStoredImpException(
+                    "Id is not found in storedRequest");
         }
 
         return storedRequestId;

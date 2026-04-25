@@ -1,19 +1,21 @@
 {
-  "id": "banner_300x250",
+  "id": "banner_300x600",
   "banner": {
     "format": [
       {
         "w": 300,
-        "h": 250
+        "h": 600
       }
     ],
     "w": 300,
-    "h": 250
+    "h": 600
   },
   "ext": {
     "prebid": {
-      "storedauctionresponse": {
-        "id": "response_300x250"
+      "bidder": {
+        "inmobi": {
+          "plc": "10000617819"
+        }
       }
     }
   }

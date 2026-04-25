@@ -1,0 +1,36 @@
+[
+  {
+    "bid": [
+      {
+        "id": "bid-300x250-1",
+        "impid": "imp3",
+        "price": 3.50,
+        "adm": "<VAST version=\\\"2.0\\\">\\r\\n<Ad id=\\\"Test\\\">\\r\\n<InLine>\\r\\n<AdSystem version=\\\"2.0\\\">Test<\\/AdSystem>\\r\\n<AdTitle>Test<\\/AdTitle>\\r\\n<Error>http:\\/\\/www.example.com\\/error<\\/Error>\\r\\n<Impression>http:\\/\\/www.example.com\\/impression<\\/Impression>\\r\\n<Creatives>\\r\\n<Creative sequence=\\\"1\\\" AdID=\\\"7E7F3BE9-9717-4289-9094-B77EEDC4086A\\\">\\r\\n<Linear skipoffset=\\\"00:00:05\\\">\\r\\n<Duration>00:00:30<\\/Duration>\\r\\n<TrackingEvents>\\r\\n<Tracking event=\\\"start\\\">http:\\/\\/www.example.com\\/start<\\/Tracking>\\r\\n<Tracking event=\\\"firstQuartile\\\">http:\\/\\/www.example.com\\/firstQuartile<\\/Tracking>\\r\\n<Tracking event=\\\"midpoint\\\">http:\\/\\/www.example.com\\/midpoint<\\/Tracking>\\r\\n<Tracking event=\\\"thirdQuartile\\\">http:\\/\\/www.example.com\\/thirdQuartile<\\/Tracking>\\r\\n<Tracking event=\\\"complete\\\">http:\\/\\/www.example.com\\/complete<\\/Tracking>\\r\\n<Tracking event=\\\"mute\\\">http:\\/\\/www.example.com\\/mute<\\/Tracking>\\r\\n<Tracking event=\\\"unmute\\\">http:\\/\\/www.example.com\\/unmute<\\/Tracking>\\r\\n<Tracking event=\\\"rewind\\\">http:\\/\\/www.example.com\\/rewind<\\/Tracking>\\r\\n<Tracking event=\\\"pause\\\">http:\\/\\/www.example.com\\/pause<\\/Tracking>\\r\\n<Tracking event=\\\"resume\\\">http:\\/\\/www.example.com\\/resume<\\/Tracking>\\r\\n<Tracking event=\\\"fullscreen\\\">http:\\/\\/www.example.com\\/fullscreen<\\/Tracking>\\r\\n<Tracking event=\\\"creativeView\\\">http:\\/\\/www.example.com\\/creativeView<\\/Tracking>\\r\\n<Tracking event=\\\"acceptInvitation\\\">http:\\/\\/www.example.com\\/acceptInvitation<\\/Tracking>\\r\\n<\\/TrackingEvents>\\r\\n<VideoClicks>\\r\\n<ClickThrough id=\\\"123\\\">http:\\/\\/google.com<\\/ClickThrough>\\r\\n<ClickTracking id=\\\"123\\\">http:\\/\\/www.example.com\\/click<\\/ClickTracking>\\r\\n<\\/VideoClicks>\\r\\n<MediaFiles>\\r\\n<MediaFile id=\\\"video\\\" delivery=\\\"progressive\\\" type=\\\"video\\/mp4\\\" bitrate=\\\"1215\\\" width=\\\"1280\\\" height=\\\"720\\\">https:\\/\\/basil79.github.io\\/vast-sample-tags\\/pg\\/24.mp4<\\/MediaFile>\\r\\n<\\/MediaFiles>\\r\\n<\\/Linear>\\r\\n<\\/Creative>\\r\\n<\\/Creatives>\\r\\n<\\/InLine>\\r\\n<\\/Ad>\\r\\n<\\/VAST>",
+        "adomain": [
+          "example.com"
+        ],
+        "crid": "creative-300x250-video",
+        "w": 300,
+        "h": 250,
+        "mtype": 2,
+        "ext": {
+          "prebid": {
+            "meta": {
+              "adaptercode": "appnexus"
+            },
+            "events": {
+              "imp": "https://ads.haloads.io/event?t=imp&b=bid-300x250-1&a=1001&bidder=appnexus&tag=video_300x250&size=300x250&p=3.50&mtype=video&f=b&x=1"
+            },
+            "targeting": {
+              "hb_bidder": "appnexus",
+              "hb_pb": "1.50",
+              "hb_size": "90x728"
+            },
+            "type": "video"
+          }
+        }
+      }
+    ],
+    "seat": "appnexus"
+  }
+]

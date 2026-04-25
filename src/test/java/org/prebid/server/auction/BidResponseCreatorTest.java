@@ -2560,11 +2560,14 @@ public class BidResponseCreatorTest extends VertxTest {
         // when
         final BidResponse bidResponse = target.create(auctionContext, CACHE_INFO, MULTI_BIDS).result();
 
-        // then
+        // then - EventsUrlEnhancer appends &p=price&mtype=bidType to event URLs
+        final Events expectedEvents = Events.of(
+                "http://event-type-win&p=5.67&mtype=banner",
+                "http://event-type-view&p=5.67&mtype=banner");
         assertThat(bidResponse.getSeatbid()).hasSize(1)
                 .flatExtracting(SeatBid::getBid)
                 .extracting(responseBid -> toExtBidPrebid(responseBid.getExt()).getEvents())
-                .containsOnly(events);
+                .containsOnly(expectedEvents);
 
         verify(coreCacheService, never()).cacheBidsOpenrtb(anyList(), any(), any(), any());
     }

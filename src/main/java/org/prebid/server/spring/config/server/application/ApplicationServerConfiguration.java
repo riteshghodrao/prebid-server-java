@@ -170,7 +170,8 @@ public class ApplicationServerConfiguration {
                                    CorsHandler corsHandler,
                                    List<ApplicationResource> resources,
                                    AdminResourcesBinder applicationPortAdminResourcesBinder,
-                                   StaticHandler staticHandler) {
+                                   StaticHandler staticHandler,
+                                   AuctionHandler openrtbAuctionHandler) {
 
         final Router router = Router.router(vertx);
         router.route().handler(bodyHandler);
@@ -180,6 +181,14 @@ public class ApplicationServerConfiguration {
         resources.forEach(resource ->
                 resource.endpoints().forEach(endpoint ->
                         router.route(endpoint.getMethod(), endpoint.getPath()).handler(resource)));
+
+        router.route(HttpMethod.POST, "/bid").handler(openrtbAuctionHandler);
+
+        router.route(HttpMethod.GET, "/sync.png").handler(ctx -> ctx.response()
+                .putHeader("Content-Type", "image/png")
+                .putHeader("Cache-Control", "no-store")
+                .setStatusCode(200)
+                .end());
 
         applicationPortAdminResourcesBinder.bind(router);
 
@@ -203,9 +212,19 @@ public class ApplicationServerConfiguration {
                         HttpUtil.ORIGIN_HEADER.toString(),
                         HttpUtil.ACCEPT_HEADER.toString(),
                         HttpUtil.CONTENT_TYPE_HEADER.toString(),
-                        HttpUtil.X_REQUESTED_WITH_HEADER.toString())))
-                .allowedMethods(new HashSet<>(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.HEAD,
-                        HttpMethod.OPTIONS)));
+                        HttpUtil.X_REQUESTED_WITH_HEADER.toString(),
+                        "Cache-Control",
+                        "Pragma",
+                        "Sec-Fetch-Dest",
+                        "Sec-Fetch-Mode",
+                        "Sec-Fetch-Site")))
+                .exposedHeaders(new HashSet<>(Arrays.asList(
+                        HttpUtil.CONTENT_TYPE_HEADER.toString(),
+                        "x-prebid")))
+                .allowedMethods(new HashSet<>(Arrays.asList(
+                        HttpMethod.GET, HttpMethod.POST,
+                        HttpMethod.HEAD, HttpMethod.OPTIONS)))
+                .maxAgeSeconds(3600);
     }
 
     @Bean

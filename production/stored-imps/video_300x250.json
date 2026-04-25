@@ -1,0 +1,20 @@
+{
+  "id": "video_300x250",
+  "video": {
+    "w": 300,
+    "h": 250,
+    "mimes": ["video/mp4"],
+    "protocols": [1, 2, 3, 4, 5, 6, 7, 8],
+    "playbackmethod": [2],
+    "plcmt": 4
+  },
+  "ext": {
+    "prebid": {
+      "bidder": {
+        "inmobi": {
+          "plc": "10000626850"
+        }
+      }
+    }
+  }
+}

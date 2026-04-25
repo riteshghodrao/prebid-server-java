@@ -233,7 +233,6 @@ public class HookStageExecutor {
         final HookExecutionContext context = auctionContext.getHookExecutionContext();
 
         final Endpoint endpoint = context.getEndpoint();
-
         return this
                 .stageExecutor(
                         StageWithHookType.PROCESSED_AUCTION_REQUEST, ENTITY_AUCTION_REQUEST, context, account, endpoint)
@@ -564,7 +563,6 @@ public class HookStageExecutor {
 
     private <T> HookStageExecutionResult<T> rejectAll(AuctionContext auctionContext,
                                                       HookStageExecutionResult<T> result) {
-
         result.getRejections()
                 .forEach((bidder, rejectedList) -> auctionContext.getBidRejectionTrackers().computeIfAbsent(
                                 bidder,

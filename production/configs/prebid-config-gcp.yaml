@@ -1,16 +1,6 @@
-external-url: https://ads.haloads.io
 status-response: "ok"
-server:
-  http:
-    enabled: true
-    port: 8080
-    server-instances: 1
-admin:
-  port: 8060
 adapters:
   appnexus:
-    enabled: true
-  inmobi:
     enabled: true
   ix:
     enabled: true
@@ -20,17 +10,13 @@ adapters:
     enabled: true
   rubicon:
     enabled: true
+  inmobi:
+    enabled: true
 metrics:
   prefix: prebid
-# Cache configuration (required even if not using Prebid Cache)
-# These values are required but won't be used if cache is disabled in bid requests
-cache:
-  scheme: http
-  host: localhost
-  path: /cache
-  query: uuid=
+# Cache disabled - not using Prebid Cache
 settings:
-  enforce-valid-account: false
+  enforce-valid-account: true
   generate-storedrequest-bidrequest-id: true
   filesystem:
     settings-filename: production/configs/app-settings.yaml
@@ -40,8 +26,7 @@ settings:
     stored-responses-dir: production/stored-responses
     categories-dir:
 gdpr:
-  default-value: 0
-  enabled: true
+  default-value: 1
   vendorlist:
     v2:
       cache-dir: /var/tmp/vendor2
@@ -56,5 +41,7 @@ admin-endpoints:
 analytics:
   gcp-monitoring:
     enabled: true
-    project-id: "halo-ads"  # Replace with your actual GCP project ID
-    metric-prefix: "custom.googleapis.com/prebid/"  # Optional: defaults to this value
+    project-id: "halo-ads"
+    metric-prefix: "custom.googleapis.com/prebid/"
+
+

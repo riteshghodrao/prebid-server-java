@@ -1,14 +1,14 @@
 {
-  "id": "banner_160x600",
+  "id": "banner_728x90",
   "banner": {
     "format": [
       {
-        "w": 160,
-        "h": 600
+        "w": 728,
+        "h": 90
       }
     ],
-    "w": 160,
-    "h": 600
+    "w": 728,
+    "h": 90
   },
   "ext": {
     "prebid": {
@@ -26,9 +26,11 @@
           "zoneId": 535510
         }
       },
-      "storedauctionresponse": {
-        "id": "response_160x600"
-      }
+      "storedauctionresponse":
+        {
+          "id": "response_728x90"
+        }
+
     }
   }
 }

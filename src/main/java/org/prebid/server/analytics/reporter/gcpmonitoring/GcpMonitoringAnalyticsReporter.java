@@ -14,9 +14,7 @@ import com.iab.openrtb.request.BidRequest;
 import com.iab.openrtb.request.Device;
 import com.iab.openrtb.request.Geo;
 import com.iab.openrtb.request.Imp;
-import com.iab.openrtb.response.Bid;
 import com.iab.openrtb.response.BidResponse;
-import com.iab.openrtb.response.SeatBid;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -34,10 +32,10 @@ import org.prebid.server.geolocation.model.GeoInfo;
 import org.prebid.server.json.JacksonMapper;
 import org.prebid.server.log.Logger;
 import org.prebid.server.log.LoggerFactory;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.prebid.server.vertx.httpclient.HttpClient;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,14 +111,14 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
             if (CollectionUtils.isNotEmpty(bidRequest.getImp())) {
                 for (Imp imp : bidRequest.getImp()) {
                     final String storedImpId = extractStoredImpId(imp);
-                    
+
                     // Track incoming requests by stored imp ID and country
                     final Map<String, String> requestLabels = new HashMap<>();
                     requestLabels.put("stored_imp_id", storedImpId != null ? storedImpId : "unknown");
                     requestLabels.put("country", country != null ? country : "unknown");
-                    requestLabels.put("account_id", auctionContext.getAccount() != null 
+                    requestLabels.put("account_id", auctionContext.getAccount() != null
                             ? auctionContext.getAccount().getId() : "unknown");
-                    
+
                     metricPoints.add(createMetricPoint(METRIC_REQUESTS, 1L, requestLabels));
 
                     // Check if ad was served for this impression
@@ -156,17 +154,23 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
             final List<MetricPoint> metricPoints = new ArrayList<>();
 
             final Map<String, String> labels = new HashMap<>();
-            labels.put("bid_id", event.getBidId() != null ? event.getBidId() : "unknown");
-            labels.put("bidder", event.getBidder() != null ? event.getBidder() : "unknown");
-            labels.put("account_id", event.getAccount() != null 
+            labels.put("bid_id", event.getBidId() != null
+                    ? event.getBidId() : "unknown");
+            labels.put("bidder", event.getBidder() != null
+                    ? event.getBidder() : "unknown");
+            labels.put("account_id", event.getAccount() != null
                     ? event.getAccount().getId() : "unknown");
-            labels.put("integration", event.getIntegration() != null 
+            labels.put("integration", event.getIntegration() != null
                     ? event.getIntegration() : "unknown");
 
+            enrichLabelsFromQueryParams(event, labels);
+
             if (event.getType() == NotificationEvent.Type.win) {
-                metricPoints.add(createMetricPoint(METRIC_BID_WON, 1L, labels));
+                metricPoints.add(createMetricPoint(
+                        METRIC_BID_WON, 1L, labels));
             } else if (event.getType() == NotificationEvent.Type.imp) {
-                metricPoints.add(createMetricPoint(METRIC_AD_RENDERED, 1L, labels));
+                metricPoints.add(createMetricPoint(
+                        METRIC_AD_RENDERED, 1L, labels));
             }
 
             if (CollectionUtils.isNotEmpty(metricPoints)) {
@@ -175,8 +179,42 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
 
             return Future.succeededFuture();
         } catch (Exception e) {
-            logger.warn("Failed to process notification event for GCP Monitoring: {}", e.getMessage());
-            return Future.succeededFuture(); // Don't fail the request if analytics fails
+            logger.warn(
+                    "Failed to process notification event"
+                            + " for GCP Monitoring: {}",
+                    e.getMessage());
+            return Future.succeededFuture();
+        }
+    }
+
+    private static void enrichLabelsFromQueryParams(
+            NotificationEvent event, Map<String, String> labels) {
+
+        if (event.getHttpContext() == null
+                || event.getHttpContext().getQueryParams() == null) {
+            return;
+        }
+
+        final var queryParams = event.getHttpContext().getQueryParams();
+
+        final String tag = queryParams.get("tag");
+        if (tag != null && !tag.isBlank()) {
+            labels.put("stored_imp_id", tag);
+        }
+
+        final String size = queryParams.get("size");
+        if (size != null && !size.isBlank()) {
+            labels.put("size", size);
+        }
+
+        final String price = queryParams.get("p");
+        if (price != null && !price.isBlank()) {
+            labels.put("price", price);
+        }
+
+        final String mtype = queryParams.get("mtype");
+        if (mtype != null && !mtype.isBlank()) {
+            labels.put("media_type", mtype);
         }
     }
 
@@ -260,8 +298,9 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
                         }
                         blockingPromise.complete();
                     } catch (Exception e) {
-                        logger.warn("Failed to initialize GCP Monitoring MetricServiceClient: {}. " +
-                                        "Metrics will not be sent. Ensure Application Default Credentials are configured.",
+                        logger.warn("Failed to initialize GCP Monitoring MetricServiceClient: {}. "
+                                        + "Metrics will not be sent. Ensure Application Default Credentials are "
+                                        + "configured.",
                                 e.getMessage());
                         // Still complete to avoid blocking, but metrics won't be sent
                         blockingPromise.complete();
@@ -345,8 +384,8 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
     private String extractCountry(BidRequest bidRequest, AuctionContext auctionContext) {
         // Try GeoInfo first
         final GeoInfo geoInfo = auctionContext.getGeoInfo();
-        if (geoInfo != null && geoInfo.getCountryCode() != null) {
-            return geoInfo.getCountryCode();
+        if (geoInfo != null && geoInfo.getCountry() != null) {
+            return geoInfo.getCountry();
         }
 
         // Try Device.geo
@@ -380,7 +419,7 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
         try {
             final JsonNode extNode = imp.getExt();
             final JsonNode prebidNode = extNode.get("prebid");
-            
+
             if (prebidNode != null && prebidNode.isObject()) {
                 // Check for storedimp.id (stored impression reference)
                 final JsonNode storedImpNode = prebidNode.get("storedimp");
@@ -390,7 +429,7 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
                         return idNode.textValue();
                     }
                 }
-                
+
                 // Fallback: check storedrequest.id (stored request reference)
                 final JsonNode storedRequestNode = prebidNode.get("storedrequest");
                 if (storedRequestNode != null && storedRequestNode.isObject()) {
@@ -426,8 +465,8 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
         return bidResponse.getSeatbid().stream()
                 .flatMap(seatBid -> CollectionUtils.emptyIfNull(seatBid.getBid()).stream())
                 .filter(bid -> Objects.equals(bid.getImpid(), imp.getId()))
-                .max((b1, b2) -> Double.compare(b1.getPrice(), b2.getPrice()))
-                .map(Bid::getPrice);
+                .max((b1, b2) -> b1.getPrice().compareTo(b2.getPrice()))
+                .map(bid -> bid.getPrice().doubleValue());
     }
 
     private MetricPoint createMetricPoint(String metricType, Number value, Map<String, String> labels) {
@@ -451,9 +490,14 @@ public class GcpMonitoringAnalyticsReporter implements AnalyticsReporter {
     }
 
     private AuctionEvent toAuctionEvent(VideoEvent videoEvent) {
+        // VideoEvent has VideoResponse, not BidResponse
+        // Get BidResponse from auctionContext instead
+        final AuctionContext auctionContext = videoEvent.getAuctionContext();
+        final BidResponse bidResponse = auctionContext != null ? auctionContext.getBidResponse() : null;
+
         return AuctionEvent.builder()
-                .auctionContext(videoEvent.getAuctionContext())
-                .bidResponse(videoEvent.getBidResponse())
+                .auctionContext(auctionContext)
+                .bidResponse(bidResponse)
                 .httpContext(videoEvent.getHttpContext())
                 .status(videoEvent.getStatus())
                 .errors(videoEvent.getErrors())

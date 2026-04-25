@@ -2,17 +2,17 @@
     {
       "bid": [
         {
-          "id": "bid-160x600-1",
+          "id": "bid-90x728-1",
           "impid": "imp3",
           "price": 1.50,
-          "adm": "<div style=\"width:160px;height:600px;background-color:#f0f0f0;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center;\">160x600 Skyscraper Ad</div>",
+          "adm": "<div style=\"width:728px;height:90px;background-color:#f0f0f0;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center;\">728x90 Leaderboard</div>",
           "adomain": [
             "example.com"
           ],
           "iurl": "https://example.com/creative-preview-160x600.jpg",
-          "crid": "creative-160x600-001",
-          "w": 160,
-          "h": 600,
+          "crid": "creative-90x728-001",
+          "w": 728,
+          "h": 90,
           "mtype": 1,
           "ext": {
             "prebid": {
@@ -20,12 +20,12 @@
                 "adaptercode": "appnexus"
               },
               "events": {
-                "imp": "https://ads.haloads.io/event?t=imp&b=bid-160x600-1&a=1001&bidder=appnexus&tag=banner_160x600&size=160x600&p=1.50&mtype=banner&f=b&x=1"
+                "imp": "https://ads.haloads.io/event?t=imp&b=bid-90x728-1&a=1001&bidder=appnexus&tag=banner_728x90&size=728x90&p=1.50&mtype=banner&f=b&x=1"
               },
               "targeting": {
                 "hb_bidder": "appnexus",
                 "hb_pb": "1.50",
-                "hb_size": "160x600"
+                "hb_size": "90x728"
               },
               "type": "banner"
             }
