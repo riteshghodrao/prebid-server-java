@@ -5,7 +5,7 @@
           "id": "bid-160x600-1",
           "impid": "imp3",
           "price": 1.50,
-          "adm": "<div style=\"width:160px;height:600px;background-color:#f0f0f0;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center;\">160x600 Skyscraper Ad</div>",
+          "adm": "<div><img src=\"https://storage.googleapis.com/halo-creatives/160x600.png\" alt=\"Halo test ad\"></div>",
           "adomain": [
             "example.com"
           ],

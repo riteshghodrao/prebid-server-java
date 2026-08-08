@@ -5,7 +5,7 @@
           "id": "bid-320x50-1",
           "impid": "imp1",
           "price": 0.75,
-          "adm": "<div style=\"width:320px;height:50px;background-color:#f0f0f0;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center;\">320x50 Banner Ad</div>",
+          "adm": "<div><img src=\"https://storage.googleapis.com/halo-creatives/320x50.png\" alt=\"Halo test ad\"></div>",
           "adomain": [
             "example.com"
           ],

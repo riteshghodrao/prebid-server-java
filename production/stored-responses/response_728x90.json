@@ -5,7 +5,7 @@
           "id": "bid-90x728-1",
           "impid": "imp3",
           "price": 1.50,
-          "adm": "<div style=\"width:728px;height:90px;background-color:#f0f0f0;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center;\">728x90 Leaderboard</div>",
+          "adm": "<div><img src=\"https://storage.googleapis.com/halo-creatives/728x90.png\" alt=\"Halo test ad\"></div>",
           "adomain": [
             "example.com"
           ],

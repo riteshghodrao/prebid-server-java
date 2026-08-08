@@ -1,0 +1,10 @@
+{
+  "at": 1,
+  "tmax": 1000,
+  "cur": ["USD"],
+  "site": {
+    "publisher": {
+      "name": "Xerve"
+    }
+  }
+}

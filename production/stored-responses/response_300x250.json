@@ -5,7 +5,7 @@
           "id": "bid-300x250-1",
           "impid": "imp2",
           "price": 1.25,
-          "adm": "<div style=\"width:300px;height:250px;background-color:#f0f0f0;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center;\">300x250 Banner Ad</div>",
+          "adm": "<div><img src=\"https://storage.googleapis.com/halo-creatives/300x250.png\" alt=\"Halo test ad\"></div>",
           "adomain": [
             "example.com"
           ],
